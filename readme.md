@@ -47,6 +47,25 @@
 > npm i
 > npm run cy:{service_name}:root
 ```
+```yaml
+- name: Trigger E2E tests in remote repository
+  id: <name>
+  continue-on-error: true
+  uses: convictional/trigger-workflow-and-wait@v1.6.4 
+  with:
+    owner: expando-global
+    repo: expando-global/expando-app-tests
+    github_token: ${{ secrets.PERSONAL_TOKEN }}
+    wait_interval: 10
+    workflow_file_name: main.yml
+    ref: master
+    client_payload: '{"test_feature_branch_version":"${{ env.TARGET_ENVIRONMENT }}-v${{ env.PACKAGE_VERSION }}-${{ env.GITHUB_SHA_SHORT }}@${{ env.REPOSITORY_NAME }}",
+                      "test_case":"TC_001_e2e_alza",
+                      "randomizer_active":"false",
+                      "products_qtty":"25",
+                      "cut_active":"true",
+                      "cut_qtty":"2"}'
+```
 
 
 ### `client_payload` arguments detail:
