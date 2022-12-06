@@ -1,0 +1,92 @@
+name: cypress e2e test product sync 🧪
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: "Log level"
+        required: true
+        default: "warning"
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+      tags:
+        description: "Test scenario tags"
+        required: false
+        type: boolean
+      environment:
+        description: "Environment to run tests against"
+        type: environment
+        required: false
+      moon:
+        description: "testing input"
+        required: false
+        type: choice
+        options:
+          - black
+          - red
+          - full
+      test-case:
+        description: "test cases"
+        required: false
+        type: choice
+        options:
+          - alza
+          - kaufland
+  push:
+jobs:
+  inputs-check:
+    # if: ${{ github.ref == 'refs/heads/main' }}
+
+    if: ${{ inputs.environment == 'alza' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+         echo "Deploying to production server on branch $GITHUB_REF"
+         echo "INPUTS moon VALUE is  ${{ inputs.moon }}"
+         echo "INPUTS env VALUE is ${{ inputs.environment }}"
+
+  cypress-run:
+    runs-on: ubuntu-latest
+    #  container: cypress/browsers:node16.13.2-chrome100-ff98
+    if: ${{ inputs.test-case == 'alza' }}
+    container: cypress/included:10.11.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+     # - name: 💾 Install Dependencies
+     #   run: |
+     #    npm ci
+     #    sudo apt-get install xvfb libgtk2.0-0 libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2
+      - name: Cypress e2e test env ${{inputs.test-case}} 
+        uses: cypress-io/github-action@v4
+        id: cypress-e2e-alza 
+        #continue-on-error: true
+        with:
+          install: false
+          start: npm run cy
+          config: video=false
+        env:
+          LEVEL: ${{ inputs.logLevel }}
+          TAGS: ${{ inputs.tags }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          MOON: ${{ inputs.moon }}
+          TEST-CASE: ${{inputs.test-case}}
+      - name: Print Cypress results
+        run: |
+         echo Cypress finished with: ${{ steps.cypress-e2e-alza.outcome }}
+
+
+      - name: Caches
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/Cypress
+            build
+            node_modules
+          key: ${{ runner.os }}-node_modules-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-build-
+ 
+

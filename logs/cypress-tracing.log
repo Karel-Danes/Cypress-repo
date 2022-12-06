@@ -1,0 +1,24 @@
+
+[Tue Dec 06 2022 11:15:16 GMT+0100 (Central European Standard Time)]
+[cypress\e2e\TC_001_e2e_alza.cy.js]:
+
+    [Testing API expected behavior -> step 1 (body length) on ALZA env]
+        cy:command (---success---): INFO	version parser: test-kaufland-service
+        cy:command (---success---): INFO	RANDOMIZER_ACTIVE type: boolean
+        cy:command (---success---): INFO	RANDOMIZER_ACTIVE values: true
+        cy:command (---success---): INFO	PRODUCTS_AMOUNT type: number
+        cy:command (---success---): INFO	PRODUCTS_AMOUNT values: 9
+        cy:command (---success---): INFO	TEST_CASE: TC_002_e2e_kaufland
+        cy:command (---success---): INFO	FEATURE_BRANCH_VERSION: test-kaufland-service
+        cy:command (---success---): INFO	env is: {"baseUrl2":"https://boostbrothers-bikes-api.herokuapp.com/motorcycles/","baseUrl":"https://jsonplaceholder.typicode.com/todos/1","TEST_CASE":"TC_002_e2e_kaufland","FEATURE_BRANCH_VERSION":"test-kaufland-service","RANDOMIZER_ACTIVE":true,"PRODUCTS_AMOUNT":9}
+        cy:command (---success---): task	envPrint, {}
+        cy:request (---success---): GET https://jsonplaceholder.typicode.com/todos/1
+Status: 200
+Response body: {
+  "userId": 1,
+  "id": 1,
+  "title": "delectus aut autem",
+  "completed": false
+}
+        cy:command (---success---): assert	expected **{ Object (userId, id, ...) }** to exist
+        cy:command (---success---): assert	expected **200** to equal **200**

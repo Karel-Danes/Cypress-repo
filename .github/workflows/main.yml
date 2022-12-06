@@ -1,0 +1,100 @@
+name: 🧪 E2E product sync build->
+on:
+  workflow_dispatch:
+    inputs:
+      test_feature_branch_version:
+        description: "Particular merge request db name."
+        required: false
+        #default: "test-alza-service"
+        type: string
+
+      randomizer_active:
+        description: "Products variants randomizer engaging"
+        required: false
+        type: boolean
+
+      products_amount:
+        description: "number of simulated product variants"
+        required: false
+        type: string
+
+      test_case:
+        description: "test cases"
+        required: false
+        type: string
+        #default: "alza"
+  push:
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Caches
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/Cypress
+            build
+            node_modules
+          key: ${{ runner.os }}-node_modules-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-build-
+
+      - name: Status check and cache update
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          echo "inputs ${{ toJSON(inputs) }}"
+          echo "event name: ${{github.event_name}}"
+          echo "CYPRESS_FEATURE_BRANCH_VERSION=${{ toJSON(github.event.inputs.test_feature_branch_version )}}" >> $GITHUB_ENV
+          echo "CYPRESS_RANDOMIZER_ACTIVE=${{ toJSON(github.event.inputs.randomizer_active) }}" >> $GITHUB_ENV
+          echo "CYPRESS_PRODUCTS_AMOUNT=${{ toJSON(github.event.inputs.products_amount)}}" >> $GITHUB_ENV
+          echo "CYPRESS_TEST_CASE=${{ github.event.inputs.test_case }}" >> $GITHUB_ENV
+          echo "E2E_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV 
+
+      - name: dotenv-action (process.env access)
+        if: ${{ github.event_name != 'workflow_dispatch' }}
+        id: dotenv
+        uses: falti/dotenv-action@v1.0.2
+
+      - name: Set environment variables
+        if: ${{ github.event_name != 'workflow_dispatch' }}
+        run: |
+          echo "event name: ${{github.event_name}}"
+          echo "E2E_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+          cat .env
+
+      - name: Install root dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Cypress run (manual trigger .env source)
+        if: ${{ (github.event_name != 'workflow_dispatch') }}
+        uses: cypress-io/github-action@v4
+        id: cypress-e2e-manual
+        with:
+          env: true
+          install: false
+          browser: electron
+          headed: false
+          spec: cypress/e2e/${{ steps.dotenv.outputs.CYPRESS_TEST_CASE }}.cy.js
+        #env:
+        # CYPRESS_TEST_CASE: ${{env.CYPRESS_TEST_CASE}}
+        # CYPRESS_FEATURE_BRANCH_VERSION: ${{env.CYPRESS_FEATURE_BRANCH_VERSION}}
+
+      - name: Cypress run (remote dispatch trigger)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        uses: cypress-io/github-action@v4
+        id: cypress-remote-dispatch
+        with:
+          install: false
+          #config: video=false, screenshotOnRunFailure=false
+          browser: electron
+          headed: false
+          spec: cypress/e2e/${{ env.CYPRESS_TEST_CASE}}.cy.js
+        env:
+          CYPRESS_TEST_CASE: ${{env.CYPRESS_TEST_CASE}}
+          CYPRESS_FEATURE_BRANCH_VERSION: ${{env.CYPRESS_FEATURE_BRANCH_VERSION}}
+          CYPRESS_RANDOMIZER_ACTIVE: ${{env.CYPRESS_RANDOMIZER_ACTIVE}}
+          CYPRESS_PRODUCTS_AMOUNT: ${{env.CYPRESS_PRODUCTS_AMOUNT}}

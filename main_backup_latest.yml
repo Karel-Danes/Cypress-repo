@@ -1,0 +1,113 @@
+name: cypress e2e test product sync 🧪
+on:
+  workflow_dispatch:
+    inputs:
+
+      cypress_test_feature_db_name:
+        description: "Particular merge request db name"
+        required: false
+        #default: "test-alza-service"
+        type: string
+
+      environment:
+        description: "Environment to run tests against"
+        type: environment
+        required: false
+
+      cypress_test_case:
+        description: "test cases"
+        required: false
+        type: choice
+        #default: "alza"
+        options:
+          - alza
+          - kaufland
+
+  push:
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump GitHub context
+        id: github_context_step
+        run: echo '${{ toJSON(github) }}'
+      - name: Dump job context
+        run: echo '${{ toJSON(job) }}'
+      - name: Dump steps context
+        run: echo '${{ toJSON(steps) }}'
+      - name: Dump runner context
+        run: echo '${{ toJSON(runner) }}'
+      - name: Dump strategy context
+        run: echo '${{ toJSON(strategy) }}'
+      - name: Dump matrix context
+        run: echo '${{ toJSON(matrix) }}'
+          
+      - name: Setting environment to ALZA
+        if: ${{ inputs.cypress_test_case == 'alza' }}
+        run: echo "CYPRESS_TEST_CASE=alza" >> $GITHUB_ENV
+
+      - name: Setting environment to KAUFLAND
+        if: ${{ inputs.cypress_test_case == 'kaufland' }}
+        run: echo "CYPRESS_TEST_CASE=kaufland" >> $GITHUB_ENV
+
+      - name: Status check and cache update
+        run: |
+          echo "inputs ${{ toJSON(inputs) }}"
+          echo "event name: ${{github.event_name}}"
+          echo "importing CYPRESS_TEST_FEATURE_DB_NAME: ${{inputs.cypress_test_feature_db_name}}"
+          echo "CYPRESS_TEST_FEATURE_DB_NAME=${{inputs.cypress_test_feature_db_name}}" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install root dependencies
+        uses: bahmutov/npm-install@v1
+
+      #  - name: Install dependecies
+      #    run: npm ci
+
+
+
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests
+
+      - name: Cypress run alza (manual trigger)
+        if: ${{ (inputs.cypress_test_case == '') || (github.event_name == 'push') }}
+        uses: cypress-io/github-action@v4
+        id: cypress-alza-manual
+        with:
+          install: false
+          browser: electron
+          headed: false
+          spec: cypress/e2e/api-call-round-alza.cy.js
+          env: cypress_test_case=alza, cypress_test_feature_db_name=${{env.CYPRESS_TEST_FEATURE_DB_NAME}}
+
+      - name: Cypress run alza
+        if: ${{ inputs.cypress_test_case == 'alza' }}
+        uses: cypress-io/github-action@v4
+        id: cypress-alza
+        with:
+          install: false
+          #config: video=false, screenshotOnRunFailure=false
+          browser: electron
+          headed: false
+          spec: cypress/e2e/api-call-round-alza.cy.js
+          env: cypress_test_case=${{ env.CYPRESS_TEST_CASE }}, cypress_test_feature_db_name=${{env.CYPRESS_TEST_FEATURE_DB_NAME}}
+          
+          #  build: npm run build
+          # start: npm run cy
+
+      - name: Cypress run kauflalnd
+        if: ${{ inputs.cypress_test_case == 'kaufland' }}
+        uses: cypress-io/github-action@v4 # use the explicit version number
+        id: cypress-kaufland
+        with:
+          install: false
+          # config: video=false,screenshotOnRunFailure=false
+          browser: electron
+          headed: false
+          spec: cypress/e2e/api-call-round-kaufland.cy.js
+          env: cypress_test_case=${{ env.CYPRESS_TEST_CASE }}, cypress_test_feature_db_name=${{env.CYPRESS_TEST_FEATURE_DB_NAME}}
+
+          #  build: npm run build
+          # start: npm run cy

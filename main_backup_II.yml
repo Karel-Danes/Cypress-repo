@@ -1,0 +1,110 @@
+name: cypress e2e test product sync 🧪📦🚀
+on:
+  workflow_dispatch:
+    inputs:
+
+      test_feature_db_name:
+        description: "Particular merge request db name"
+        required: false
+        #default: "test-alza-service"
+        type: string
+
+      hele:
+        description: "something"
+        required: false
+        type: choice
+        options:
+          - TDM4tx850
+          - TDM
+
+      test_case:
+        description: "test cases"
+        required: false
+        type: choice
+        #default: "alza"
+        options:
+          - alza
+          - kaufland
+
+  push:
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Status check and cache update
+        run: |
+          echo "inputs ${{ toJSON(inputs) }}"
+          echo "event name: ${{github.event_name}}"
+          echo "importing CYPRESS_TEST_FEATURE_DB_NAME: ${{github.event.inputs.test_feature_db_name}}"
+          echo "CYPRESS_TEST_FEATURE_DB_NAME=${{github.event.inputs.test_feature_db_name}}" >> $GITHUB_ENV
+          echo "CYPRESS_HELE=${{github.event.inputs.hele}}" >> $GITHUB_ENV
+          
+      - name: Setting environment to ALZA
+        if: ${{ github.event.inputs.test_case == 'alza' }}
+        run: |
+          echo "CYPRESS_TEST_CASE=alza" >> $GITHUB_ENV
+
+      - name: Setting environment to KAUFLAND
+        if: ${{ github.event.inputs.test_case == 'kaufland' }}
+        run: |
+          echo "CYPRESS_TEST_CASE=kaufland" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Caches
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/Cypress
+            build
+            node_modules
+          key: ${{ runner.os }}-node_modules-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-build-
+
+      - name: Install root dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Cypress run alza (manual trigger)
+        if: ${{ (github.event.inputs.test_case == '') || (github.event_name == 'push') }}
+        uses: cypress-io/github-action@v4
+        id: cypress-alza-manual
+        with:
+          install: false
+          browser: electron
+          headed: false
+          spec: cypress/e2e/api-call-round-alza.cy.js
+          env: test_case=alza, test_feature_db_name=${{env.CYPRESS_TEST_FEATURE_DB_NAME}}
+
+      - name: Cypress run alza (dispatch trigger)
+        if: ${{ github.event.inputs.test_case == 'alza' }}
+        uses: cypress-io/github-action@v4
+        id: cypress-alza
+        with:
+          install: false
+          #config: video=false, screenshotOnRunFailure=false
+          browser: electron
+          headed: false
+          spec: cypress/e2e/api-call-round-alza.cy.js
+          env: test_case=${{ env.CYPRESS_TEST_CASE }}, test_feature_db_name=${{env.CYPRESS_TEST_FEATURE_DB_NAME}}
+          
+          # build: npm run build
+          # start: npm run cy   
+
+      - name: Cypress run kauflalnd (dispatch trigger)
+        if: ${{ github.event.inputs.test_case == 'kaufland' }}
+        uses: cypress-io/github-action@v4
+        id: cypress-kaufland
+        with:
+          install: false
+          # config: video=false,screenshotOnRunFailure=false
+          browser: electron
+          headed: false
+          spec: cypress/e2e/api-call-round-kaufland.cy.js
+          env: test_case=${{ env.CYPRESS_TEST_CASE }}, test_feature_db_name=${{env.CYPRESS_TEST_FEATURE_DB_NAME}}
+
+          #  build: npm run build
+          # start: npm run cy
