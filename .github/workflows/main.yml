@@ -43,7 +43,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node_modules-build-
 
-      - name: Status check and cache update
+      - name: Status check and cache update.
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           echo "inputs ${{ toJSON(inputs) }}"
