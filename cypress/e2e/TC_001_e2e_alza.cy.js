@@ -5,7 +5,9 @@ const importedTestCase = Cypress.env('TEST_CASE')
 const importedFeatureBranchDbName = Cypress.env('FEATURE_BRANCH_VERSION')
 
 
-let mongoString = mongoUrlStringParser(importedFeatureBranchDbName);
+let mongoString = mongoUrlStringParser(importedFeatureBranchDbName,'version');
+let mongoString2 = mongoUrlStringParser(importedFeatureBranchDbName,'commitId');
+
 
 // from 4house project
 function envActivityInit(environment, inputFixtureData) {
@@ -43,6 +45,10 @@ describe('Testing API expected behavior', () => {
     Cypress.log({
       name: 'INFO',
       message: `version parser: ${mongoString}`
+    })
+    Cypress.log({
+      name: 'INFO',
+      message: `comitId parser: ${mongoString2}`
     })
 
     Cypress.log({

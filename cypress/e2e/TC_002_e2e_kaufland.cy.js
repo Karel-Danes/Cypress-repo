@@ -5,7 +5,8 @@ const fixtures = require('../fixtures/fixtures')
 const importedFeatureBranchDbName = Cypress.env('FEATURE_BRANCH_VERSION')
 
 
-let mongoString = mongoUrlStringParser(importedFeatureBranchDbName);
+let mongoString = mongoUrlStringParser(importedFeatureBranchDbName,'version');
+let mongoString2 = mongoUrlStringParser(importedFeatureBranchDbName,'commitId');
 
 Cypress.Commands.add('envPrint', () => {
   cy
@@ -20,6 +21,11 @@ describe('Testing API expected behavior', () => {
     Cypress.log({
       name: 'INFO',
       message: `version parser: ${mongoString}`
+    })
+
+    Cypress.log({
+      name: 'INFO',
+      message: `commitId parser: ${mongoString2}`
     })
 
     Cypress.log({
