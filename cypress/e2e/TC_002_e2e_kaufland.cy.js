@@ -1,4 +1,5 @@
 /// <reference types="cypress" />
+import { mongoUrlStringParser } from '../support/parent_functions';
 const fixtures = require('../fixtures/fixtures')
 
 const importedFeatureBranchDbName = Cypress.env('FEATURE_BRANCH_VERSION')
