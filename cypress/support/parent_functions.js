@@ -51,7 +51,7 @@ function tryToFindMongoUrlString(param, specificator) {
             counter++
             //arrayOfCandidates.push(tagString.split('-')[i])
             //console.log(arrayOfCandidates[i])
-            if (arrayOfCandidates[i].length == 7 && (arrayOfCandidates[i]).includes('.') == false) {
+            if ((arrayOfCandidates[i].length == 7 || arrayOfCandidates[i].length == 6) && (arrayOfCandidates[i]).includes('.') == false) {
               outputMongoDbString =  `test-${serviceName}-${arrayOfCandidates[i]}` ;
   
             } else if (counter == arrayOfCandidates.length && outputMongoDbString == '') {
@@ -59,7 +59,7 @@ function tryToFindMongoUrlString(param, specificator) {
             }
           }
         }
-      } else if (tagString.includes('-') == false && tagString.includes('.') == false && tagString.length == 7) {
+      } else if (tagString.includes('-') == false && tagString.includes('.') == false && (tagString.length == 7 || tagString.length == 6 )) {
         outputMongoDbString = `test-${serviceName}-${tagString}`
   
       } else {
