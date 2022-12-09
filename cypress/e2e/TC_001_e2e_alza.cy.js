@@ -4,13 +4,9 @@ const fixtures = require('../fixtures/fixtures')
 const importedTestCase = Cypress.env('TEST_CASE')
 const importedFeatureBranchDbName = Cypress.env('FEATURE_BRANCH_VERSION')
 
-
 let mongoString = mongoUrlStringParser(importedFeatureBranchDbName,'version');
 let mongoString2 = mongoUrlStringParser(importedFeatureBranchDbName,'commitId');
 
-
-// from 4house project
-function envActivityInit(environment, inputFixtureData) {
 
   const envs = Object.keys(inputFixtureData);
   envs.forEach((item, index) => {
@@ -18,7 +14,7 @@ function envActivityInit(environment, inputFixtureData) {
       environment.push(inputFixtureData[item])
     }
   });
-}
+
 
 function setEnv(paramTC, paramDB) {
   Cypress.log({
@@ -31,7 +27,6 @@ function setEnv(paramTC, paramDB) {
 Cypress.Commands.add('envPrint', () => {
   cy
     .task('envPrint', {})
-
 })
 
 describe('Testing API expected behavior', () => {
@@ -49,6 +44,11 @@ describe('Testing API expected behavior', () => {
     Cypress.log({
       name: 'INFO',
       message: `comitId parser: ${mongoString2}`
+    })
+
+    Cypress.log({
+      name: 'INFO',
+      message: `SERVICE_NAME values: ${Cypress.env('SERVICE_NAME')}`
     })
 
     Cypress.log({

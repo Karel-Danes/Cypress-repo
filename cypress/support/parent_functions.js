@@ -2,6 +2,12 @@ let vMajor;
 let vMinor;
 let vPatch;
 
+function tryToFindServiceName(param) {
+  let serviceNamefound
+  if (param.includes("/") ) {
+    serviceNamefound = (outputStep1[1].split("/"))[1]
+  }
+}
 
 function tryToFindMongoUrlString(param, specificator) {
     let arrayOfCandidates = [];

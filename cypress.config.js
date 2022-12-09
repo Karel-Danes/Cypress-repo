@@ -66,7 +66,6 @@ module.exports = defineConfig({
         envPrint() {
           //console.log('service environment is: ' + process.env.CYPRESS_TEST_CASE)
           //console.log('FEATURE BRANCH DB NAME is: ' + process.env.CYPRESS_TEST_FEATURE_DB_NAME)
-
           //console.log('over all .env cache: ' + JSON.stringify(process.env, undefined, 2))
 
 

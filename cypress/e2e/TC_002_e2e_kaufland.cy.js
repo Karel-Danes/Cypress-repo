@@ -30,6 +30,11 @@ describe('Testing API expected behavior', () => {
 
     Cypress.log({
       name: 'INFO',
+      message: `SERVICE_NAME values: ${Cypress.env('SERVICE_NAME')}`
+    })
+
+    Cypress.log({
+      name: 'INFO',
       message: `RANDOMIZER_ACTIVE type: ${typeof (Cypress.env('RANDOMIZER_ACTIVE'))}`
     })
 
