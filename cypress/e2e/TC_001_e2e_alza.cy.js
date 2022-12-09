@@ -8,14 +8,6 @@ let mongoString = mongoUrlStringParser(importedFeatureBranchDbName,'version');
 let mongoString2 = mongoUrlStringParser(importedFeatureBranchDbName,'commitId');
 
 
-  const envs = Object.keys(inputFixtureData);
-  envs.forEach((item, index) => {
-    if (inputFixtureData[item].active === true) {
-      environment.push(inputFixtureData[item])
-    }
-  });
-
-
 function setEnv(paramTC, paramDB) {
   Cypress.log({
     name: 'env sensitivity',
