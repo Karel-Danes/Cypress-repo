@@ -23,7 +23,8 @@ module.exports = defineConfig({
     TEST_CASE: process.env.CYPRESS_TEST_CASE,
     FEATURE_BRANCH_VERSION: process.env.CYPRESS_FEATURE_BRANCH_VERSION,
     RANDOMIZER_ACTIVE: booleanParser(process.env.CYPRESS_RANDOMIZER_ACTIVE),
-    PRODUCTS_AMOUNT: parseInt(process.env.CYPRESS_PRODUCTS_AMOUNT)
+    PRODUCTS_AMOUNT: parseInt(process.env.CYPRESS_PRODUCTS_AMOUNT),
+    SERVICE_NAME: process.env.CYPRESS_SERVICE_NAME
   },
   e2e: {
     setupNodeEvents(on, config) {
