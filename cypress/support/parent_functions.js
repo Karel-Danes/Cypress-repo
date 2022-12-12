@@ -165,7 +165,7 @@ function tryToFindMongoUrlString(param, specificator) {
 
 function mongoUrlStringParser(dockerImageTag, repoName, specificator) {
   let inputTag = dockerImageTag.toLowerCase();
-  let inputRepoName = repoName.toLocaleLowerCase();
+  let inputRepoName = repoName.toLowerCase();
   let outputMongoDbName;
 
   switch (inputTag) {
