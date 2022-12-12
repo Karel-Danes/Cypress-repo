@@ -1,11 +1,12 @@
 /// <reference types="cypress" />
-import { mongoUrlStringParser} from "./../support/parent_functions"
+import { mongoUrlStringParser } from "./../support/parent_functions"
 const fixtures = require('../fixtures/fixtures')
 const importedTestCase = Cypress.env('TEST_CASE')
+const importedServiceName = Cypress.env('SERVICE_NAME')
 const importedFeatureBranchDbName = Cypress.env('FEATURE_BRANCH_VERSION')
 
-let mongoString = mongoUrlStringParser(importedFeatureBranchDbName,'version');
-let mongoString2 = mongoUrlStringParser(importedFeatureBranchDbName,'commitId');
+let mongoString = mongoUrlStringParser(importedFeatureBranchDbName, importedServiceName, 'version');
+let mongoString2 = mongoUrlStringParser(importedFeatureBranchDbName, importedServiceName, 'commitId');
 
 
 function setEnv(paramTC, paramDB) {
@@ -45,7 +46,7 @@ describe('Testing API expected behavior', () => {
 
     Cypress.log({
       name: 'INFO',
-      message: `RANDOMIZER_ACTIVE type: ${typeof(Cypress.env('RANDOMIZER_ACTIVE'))}`
+      message: `RANDOMIZER_ACTIVE type: ${typeof (Cypress.env('RANDOMIZER_ACTIVE'))}`
     })
 
     Cypress.log({
@@ -55,7 +56,7 @@ describe('Testing API expected behavior', () => {
 
     Cypress.log({
       name: 'INFO',
-      message: `PRODUCTS_AMOUNT type: ${typeof(Cypress.env('PRODUCTS_AMOUNT'))}`
+      message: `PRODUCTS_AMOUNT type: ${typeof (Cypress.env('PRODUCTS_AMOUNT'))}`
     })
 
     Cypress.log({

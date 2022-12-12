@@ -3,10 +3,10 @@ import { mongoUrlStringParser } from '../support/parent_functions';
 const fixtures = require('../fixtures/fixtures')
 
 const importedFeatureBranchDbName = Cypress.env('FEATURE_BRANCH_VERSION')
+const importedServiceName = Cypress.env('SERVICE_NAME')
 
-
-let mongoString = mongoUrlStringParser(importedFeatureBranchDbName,'version');
-let mongoString2 = mongoUrlStringParser(importedFeatureBranchDbName,'commitId');
+let mongoString = mongoUrlStringParser(importedFeatureBranchDbName, importedServiceName, 'version');
+let mongoString2 = mongoUrlStringParser(importedFeatureBranchDbName, importedServiceName, 'commitId');
 
 Cypress.Commands.add('envPrint', () => {
   cy
