@@ -110,7 +110,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with: 
           name: unsynced-product-variants-for-download
-          path: cache_data
+          path: cache_data.tar
           retention-days: 30
           if-no-files-found: ignore
 
