@@ -105,22 +105,11 @@ jobs:
           CYPRESS_SERVICE_NAME: ${{env.CYPRESS_SERVICE_NAME}}
           CYPRESS_RANDOMIZER_ACTIVE: ${{env.CYPRESS_RANDOMIZER_ACTIVE}}
           CYPRESS_PRODUCTS_AMOUNT: ${{env.CYPRESS_PRODUCTS_AMOUNT}}
-
-      - name: Step 1 - Create a temporary artifact downloads folder
-        run: mkdir downloads
-        
-      - name: step 2 - Add artifacts to publish to the temp folder
-        run: |
-          cd downloads
-          echo 'alpha'    > alpha.json
-          echo 'bravo'    > bravo.json
-          echo 'charlie'  > charlie.json
-          cd ..
     
       - name: Step 3 - Use the Upload Artifact GitHub Action
         uses: actions/upload-artifact@v2
         with: 
-          name: assets-for-download
+          name: unsynced-product-variants-for-download
           path: cache_data
           retention-days: 30
           if-no-files-found: ignore
