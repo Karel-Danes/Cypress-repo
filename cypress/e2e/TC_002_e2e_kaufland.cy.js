@@ -1,5 +1,7 @@
 /// <reference types="cypress" />
-import { mongoUrlStringParser } from '../support/parent_functions';
+const fs = require('fs');
+
+import { mongoUrlStringParser, setupMicroServicesInvolved } from "./../support/parent_functions"
 const fixtures = require('../fixtures/fixtures')
 
 const importedFeatureBranchDbName = Cypress.env('FEATURE_BRANCH_VERSION')
@@ -12,11 +14,25 @@ Cypress.Commands.add('envPrint', () => {
   cy
     .task('envPrint', {})
 })
+let x = setupMicroServicesInvolved()
 
 describe('Testing API expected behavior', () => {
   it.only('step 1 (body length) on KAUFLAND env', () => {
     cy
       .envPrint()
+      
+    cy
+      .task('setupMicroServicesCredentials').then(resp => {
+        Cypress.log({
+          name: 'INFO',
+          message: `services name in json: ${JSON.stringify(resp)}`
+        })
+      })
+
+    Cypress.log({
+      name: 'INFO',
+      message: `services name in json: ${JSON.stringify(x)}`
+    })
 
     Cypress.log({
       name: 'INFO',

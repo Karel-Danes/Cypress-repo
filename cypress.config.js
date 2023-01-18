@@ -1,3 +1,4 @@
+const fs = require('fs')
 const { defineConfig } = require("cypress");
 let today = new Date();
 require('dotenv').config()
@@ -5,13 +6,18 @@ require('dotenv').config()
 function booleanParser(param) {
   string = param
   switch (string.toLowerCase()) {
-      case "false":       
-          return false
-      case "true":
-          return true
-      default:
-          return param;
+    case "false":
+      return false
+    case "true":
+      return true
+    default:
+      return param;
   }
+}
+
+function readCredentials() {
+  let output = fs.readFileSync('./cypress/fixtures/microServicesCredencials.json');
+  return output;
 }
 
 module.exports = defineConfig({
@@ -63,22 +69,12 @@ module.exports = defineConfig({
           return launchOptions;
         }
       })
+
       on('task', {
         envPrint() {
           //console.log('service environment is: ' + process.env.CYPRESS_TEST_CASE)
           //console.log('FEATURE BRANCH DB NAME is: ' + process.env.CYPRESS_TEST_FEATURE_DB_NAME)
           //console.log('over all .env cache: ' + JSON.stringify(process.env, undefined, 2))
-
-
-          /*
-                    Object.entries(process.env).forEach(
-                      ([key, value]) => (
-                        console.log(key, value)
-                      )
-                    )
-          */
-
-
           for (let [key, value] of Object.entries(process.env)) {
             if (key.includes('CYPRESS') || key.includes('TEST')) {
               console.log(`${key}: ${value}`)
@@ -87,6 +83,27 @@ module.exports = defineConfig({
           return null
         }
       })
+
+      on('task', {
+        setupMicroServicesCredentials() {
+          return new Promise((resolve, reject) => {
+            let output = fs.readFileSync('./cypress/fixtures/microServicesCredentials.json', { encoding: 'utf8', flag: 'r' })
+            
+            resolve(output);
+
+          })
+        }
+      })
+
+      on('task', {
+        writeServiceCredential(param) {
+          return new Promise((resolve, reject) => {
+            fs.writeFileSync('./cypress/fixtures/microServicesCredentials2.json', JSON.stringify(param))
+            resolve('Done')
+          })
+        }
+      })
+
     },
   },
 });

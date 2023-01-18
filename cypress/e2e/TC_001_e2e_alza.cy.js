@@ -1,5 +1,7 @@
 /// <reference types="cypress" />
-import { mongoUrlStringParser } from "./../support/parent_functions"
+const fs = require('fs');
+
+import { mongoUrlStringParser, setupMicroServicesInvolved } from "./../support/parent_functions"
 const fixtures = require('../fixtures/fixtures')
 const importedTestCase = Cypress.env('TEST_CASE')
 const importedServiceName = Cypress.env('SERVICE_NAME')
@@ -7,7 +9,6 @@ const importedFeatureBranchDbName = Cypress.env('FEATURE_BRANCH_VERSION')
 
 let mongoString = mongoUrlStringParser(importedFeatureBranchDbName, importedServiceName, 'version');
 let mongoString2 = mongoUrlStringParser(importedFeatureBranchDbName, importedServiceName, 'commitId');
-
 
 function setEnv(paramTC, paramDB) {
   Cypress.log({
@@ -21,6 +22,7 @@ Cypress.Commands.add('envPrint', () => {
   cy
     .task('envPrint', {})
 })
+//let x = setupMicroServicesInvolved()
 
 describe('Testing API expected behavior', () => {
   it.only('step 1 (body length) on ALZA env', () => {
@@ -28,7 +30,20 @@ describe('Testing API expected behavior', () => {
     cy
       .envPrint()
 
+    cy
+      .task('setupMicroServicesCredentials').then(resp => {
+        let string = JSON.stringify(resp)
+        cy
+          .task('writeServiceCredential', resp)
+        Cypress.log({
+          name: 'INFO',
+          message: `services name in json: ${resp}`
+        })
+      })
+
     //setEnv(importedTestCase, importedFeatureBranchDbName)
+
+
 
     Cypress.log({
       name: 'INFO',

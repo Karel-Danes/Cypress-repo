@@ -1,17 +1,65 @@
 
-[Tue Dec 06 2022 11:15:16 GMT+0100 (Central European Standard Time)]
+[Tue Dec 13 2022 12:48:05 GMT+0100 (Central European Standard Time)]
+[cypress\e2e\TC_002_e2e_kaufland.cy.js]:
+
+    [An uncaught error was detected outside of a test]
+
+[Tue Dec 13 2022 12:48:05 GMT+0100 (Central European Standard Time)]
 [cypress\e2e\TC_001_e2e_alza.cy.js]:
 
     [Testing API expected behavior -> step 1 (body length) on ALZA env]
         cy:command (---success---): INFO	version parser: test-kaufland-service
+        cy:command (---success---): INFO	comitId parser: test-kaufland-service
+        cy:command (---success---): INFO	SERVICE_NAME values: expando-global/kaufland-service
         cy:command (---success---): INFO	RANDOMIZER_ACTIVE type: boolean
         cy:command (---success---): INFO	RANDOMIZER_ACTIVE values: true
         cy:command (---success---): INFO	PRODUCTS_AMOUNT type: number
         cy:command (---success---): INFO	PRODUCTS_AMOUNT values: 9
         cy:command (---success---): INFO	TEST_CASE: TC_002_e2e_kaufland
         cy:command (---success---): INFO	FEATURE_BRANCH_VERSION: test-kaufland-service
-        cy:command (---success---): INFO	env is: {"baseUrl2":"https://boostbrothers-bikes-api.herokuapp.com/motorcycles/","baseUrl":"https://jsonplaceholder.typicode.com/todos/1","TEST_CASE":"TC_002_e2e_kaufland","FEATURE_BRANCH_VERSION":"test-kaufland-service","RANDOMIZER_ACTIVE":true,"PRODUCTS_AMOUNT":9}
+        cy:command (---success---): INFO	env is: {"baseUrl2":"https://boostbrothers-bikes-api.herokuapp.com/motorcycles/","baseUrl":"https://jsonplaceholder.typicode.com/todos/1","TEST_CASE":"TC_002_e2e_kaufland","FEATURE_BRANCH_VERSION":"test-kaufland-service","RANDOMIZER_ACTIVE":true,"PRODUCTS_AMOUNT":9,"SERVICE_NAME":"expando-global/kaufland-service"}
         cy:command (---success---): task	envPrint, {}
+        cy:command (---success---): task	setupMicroServicesCredentials
+        cy:command (---success---): INFO	services name in json: {
+    "alza_service": {
+        "imageTag": "",
+        "activeTag": false,
+        "default": "test-alza-service",
+        "activeBasic": false
+    },
+    "expando_service": {
+        "imageTag": "",
+        "activeTag": false,
+        "default": "test-expando-service",
+        "active": false
+    },
+    "product_service": {
+        "imageTag": "",
+        "activeTag": false,
+        "default": "test-product-service",
+        "activeBasic": false
+    }
+}
+        cy:command (---success---): task	writeServiceCredential, {
+    "alza_service": {
+        "imageTag": "",
+        "activeTag": false,
+        "default": "test-alza-service",
+        "activeBasic": false
+    },
+    "expando_service": {
+        "imageTag": "",
+        "activeTag": false,
+        "default": "test-expando-service",
+        "active": false
+    },
+    "product_service": {
+        "imageTag": "",
+        "activeTag": false,
+        "default": "test-product-service",
+        "activeBasic": false
+    }
+}
         cy:request (---success---): GET https://jsonplaceholder.typicode.com/todos/1
 Status: 200
 Response body: {

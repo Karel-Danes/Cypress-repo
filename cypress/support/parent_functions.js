@@ -2,6 +2,8 @@ let vMajor;
 let vMinor;
 let vPatch;
 
+const fs = require('fs');
+
 
 /*
 function tryToFindMongoUrlString(param, specificator) {
@@ -95,7 +97,7 @@ function tryToFindServiceName(param) {
     serviceNamefound = param
   }
 
- return serviceNamefound;
+  return serviceNamefound;
 }
 
 function tryToFindMongoUrlString(param, specificator) {
@@ -126,16 +128,16 @@ function tryToFindMongoUrlString(param, specificator) {
     }
     let version = `v${vMajor}.${vMinor}.${vPatch}`
     //let outputStep1 = inputString.split("~")
-   // let serviceName = (outputStep1[1].split("/"))[1]
+    // let serviceName = (outputStep1[1].split("/"))[1]
     outputMongoDbString = `${version}`
     return outputMongoDbString
 
   } else if (specificator == 'commitId') {
     const noCommitIdErr = new Error(`ERROR: Docker image tag does not provide "commitId". fix it on calling repository side (client_payload:{values...}), or use "version" as specififator. Data you passed: "${param}" `)
     //let outputStep1 = inputString.split("~")
-   // let tagString = outputStep1[0]
-   let tagString = param
-   // let serviceName = (outputStep1[1].split("/"))[1]
+    // let tagString = outputStep1[0]
+    let tagString = param
+    // let serviceName = (outputStep1[1].split("/"))[1]
     if (tagString.includes('-')) {
 
       if (tagString.split('-').length > 0) {
@@ -182,4 +184,9 @@ function mongoUrlStringParser(dockerImageTag, repoName, specificator) {
   }
 }
 
-export { mongoUrlStringParser }
+function setupMicroServicesInvolved() {
+  let output = fs.readFileSync('../fixtures/microServicesCredentials.json',{ encoding: 'utf8', flag: 'r' });
+  return output;
+}
+
+export { mongoUrlStringParser, setupMicroServicesInvolved }
