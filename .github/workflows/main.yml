@@ -11,7 +11,7 @@ on:
       service_name:
         description: "name of calling respository"
         required: false
-        type: string  
+        type: string
 
       randomizer_active:
         description: "Products variants randomizer engaging"
@@ -32,9 +32,9 @@ on:
 
 jobs:
   cypress-run:
-   # outputs: 
-     # cy-manual: ${{steps.cypress-e2e-manual.outputs}}
-     # cy-remote: ${{steps.cypress-remote-dispatch.outputs}}
+    # outputs:
+    # cy-manual: ${{steps.cypress-e2e-manual.outputs}}
+    # cy-remote: ${{steps.cypress-remote-dispatch.outputs}}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -61,7 +61,7 @@ jobs:
           echo "CYPRESS_RANDOMIZER_ACTIVE=${{ toJSON(github.event.inputs.randomizer_active) }}" >> $GITHUB_ENV
           echo "CYPRESS_PRODUCTS_AMOUNT=${{ toJSON(github.event.inputs.products_amount)}}" >> $GITHUB_ENV
           echo "CYPRESS_TEST_CASE=${{ github.event.inputs.test_case }}" >> $GITHUB_ENV
-          echo "E2E_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV 
+          echo "E2E_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
       - name: dotenv-action (process.env access)
         if: ${{ github.event_name != 'workflow_dispatch' }}
@@ -110,16 +110,14 @@ jobs:
           CYPRESS_PRODUCTS_AMOUNT: ${{env.CYPRESS_PRODUCTS_AMOUNT}}
 
       - name: Create artifact package
-       # if: failure()
+        if: ${{steps.cypress-e2e-manual.outputs.conclusion == 'success'}}
         run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json
-    
+
       - name: Upload Artifact GitHub Action
-        if: (steps.cypress-e2e-manual.outputs.conclusion == 'success')
+        if: ${{steps.cypress-e2e-manual.outputs.conclusion == 'success'}}
         uses: actions/upload-artifact@v3
-        with: 
+        with:
           name: unsynced-product-variants-for-download
           path: nonSyncedProducts.tar
           retention-days: 30
           if-no-files-found: ignore
-
-
