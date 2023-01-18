@@ -28,10 +28,7 @@ describe('Testing API expected behavior', () => {
         })
       })
 
-    Cypress.log({
-      name: 'INFO',
-      message: `services name in json: ${JSON.stringify(x)}`
-    })
+ 
 
     Cypress.log({
       name: 'INFO',
