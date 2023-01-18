@@ -109,7 +109,7 @@ jobs:
           CYPRESS_RANDOMIZER_ACTIVE: ${{env.CYPRESS_RANDOMIZER_ACTIVE}}
           CYPRESS_PRODUCTS_AMOUNT: ${{env.CYPRESS_PRODUCTS_AMOUNT}}
       - name: status    
-        run: echo ${{steps.cypress-e2e-manual.outputs.conclusion}}
+        run: echo "${{steps.cypress-e2e-manual.outputs.conclusion}}"
 
       - name: Create artifact package
         if: ${{steps.cypress-e2e-manual.outputs.conclusion == 'success'}}
