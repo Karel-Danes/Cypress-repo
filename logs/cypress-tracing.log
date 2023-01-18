@@ -1,65 +1,26 @@
 
-[Tue Dec 13 2022 12:48:05 GMT+0100 (Central European Standard Time)]
+[Wed Jan 18 2023 13:52:09 GMT+0100 (Central European Standard Time)]
 [cypress\e2e\TC_002_e2e_kaufland.cy.js]:
 
-    [An uncaught error was detected outside of a test]
-
-[Tue Dec 13 2022 12:48:05 GMT+0100 (Central European Standard Time)]
-[cypress\e2e\TC_001_e2e_alza.cy.js]:
-
-    [Testing API expected behavior -> step 1 (body length) on ALZA env]
+    [Testing API expected behavior -> step 1 (body length) on KAUFLAND env]
         cy:command (---success---): INFO	version parser: test-kaufland-service
-        cy:command (---success---): INFO	comitId parser: test-kaufland-service
+        cy:command (---success---): INFO	commitId parser: test-kaufland-service
         cy:command (---success---): INFO	SERVICE_NAME values: expando-global/kaufland-service
         cy:command (---success---): INFO	RANDOMIZER_ACTIVE type: boolean
         cy:command (---success---): INFO	RANDOMIZER_ACTIVE values: true
         cy:command (---success---): INFO	PRODUCTS_AMOUNT type: number
         cy:command (---success---): INFO	PRODUCTS_AMOUNT values: 9
         cy:command (---success---): INFO	TEST_CASE: TC_002_e2e_kaufland
-        cy:command (---success---): INFO	FEATURE_BRANCH_VERSION: test-kaufland-service
+        cy:command (---success---): INFO	FEAURE_BRANCH_VERSION: test-kaufland-service
         cy:command (---success---): INFO	env is: {"baseUrl2":"https://boostbrothers-bikes-api.herokuapp.com/motorcycles/","baseUrl":"https://jsonplaceholder.typicode.com/todos/1","TEST_CASE":"TC_002_e2e_kaufland","FEATURE_BRANCH_VERSION":"test-kaufland-service","RANDOMIZER_ACTIVE":true,"PRODUCTS_AMOUNT":9,"SERVICE_NAME":"expando-global/kaufland-service"}
-        cy:command (---success---): task	envPrint, {}
+        cy:command (---success---): writeFile	./cache_data/cache.json
         cy:command (---success---): task	setupMicroServicesCredentials
-        cy:command (---success---): INFO	services name in json: {
-    "alza_service": {
-        "imageTag": "",
-        "activeTag": false,
-        "default": "test-alza-service",
-        "activeBasic": false
-    },
-    "expando_service": {
-        "imageTag": "",
-        "activeTag": false,
-        "default": "test-expando-service",
-        "active": false
-    },
-    "product_service": {
-        "imageTag": "",
-        "activeTag": false,
-        "default": "test-product-service",
-        "activeBasic": false
+        cy:command (---success---): INFO	services name in json: "{\r\n    \"alza_service\": {\r\n        \"imageTag\": \"\",\r\n        \"activeTag\": false,\r\n        \"default\": \"test-alza-service\",\r\n        \"activeBasic\": false\r\n    },\r\n    \"expando_service\": {\r\n        \"imageTag\": \"\",\r\n        \"activeTag\": false,\r\n        \"default\": \"test-expando-service\",\r\n        \"active\": false\r\n    },\r\n    \"product_service\": {\r\n        \"imageTag\": \"\",\r\n        \"activeTag\": false,\r\n        \"default\": \"test-product-service\",\r\n        \"activeBasic\": false\r\n    }\r\n}"
+        cy:intercept (---success---): Matcher: "/login"
+Mocked Response: req => {
+      req.headers['x-custom-headers'] = 'added by expando';
+      console.log(req);
     }
-}
-        cy:command (---success---): task	writeServiceCredential, {
-    "alza_service": {
-        "imageTag": "",
-        "activeTag": false,
-        "default": "test-alza-service",
-        "activeBasic": false
-    },
-    "expando_service": {
-        "imageTag": "",
-        "activeTag": false,
-        "default": "test-expando-service",
-        "active": false
-    },
-    "product_service": {
-        "imageTag": "",
-        "activeTag": false,
-        "default": "test-product-service",
-        "activeBasic": false
-    }
-}
         cy:request (---success---): GET https://jsonplaceholder.typicode.com/todos/1
 Status: 200
 Response body: {

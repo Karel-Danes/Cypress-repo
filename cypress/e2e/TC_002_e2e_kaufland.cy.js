@@ -15,11 +15,16 @@ Cypress.Commands.add('envPrint', () => {
     .task('envPrint', {})
 })
 //let x = setupMicroServicesInvolved()
+const dataToWrite = {
+  mega: 5648
+}
 
 describe('Testing API expected behavior', () => {
   it.only('step 1 (body length) on KAUFLAND env', () => {
-   // cy   .envPrint()
-      
+    // cy   .envPrint()
+    cy
+      .writeFile('./cache_data/cache.json', dataToWrite)
+
     cy
       .task('setupMicroServicesCredentials').then(resp => {
         Cypress.log({
@@ -27,8 +32,6 @@ describe('Testing API expected behavior', () => {
           message: `services name in json: ${JSON.stringify(resp)}`
         })
       })
-
- 
 
     Cypress.log({
       name: 'INFO',
