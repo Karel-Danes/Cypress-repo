@@ -32,6 +32,9 @@ on:
 
 jobs:
   cypress-run:
+    outputs: 
+      cy-manual: ${{steps.cypress-e2e-manual.outputs}}
+      cy-remote: ${{steps.cypress-remote-dispatch.outputs}}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -107,10 +110,11 @@ jobs:
           CYPRESS_PRODUCTS_AMOUNT: ${{env.CYPRESS_PRODUCTS_AMOUNT}}
 
       - name: Create artifact package
-        if: failure()
+       # if: failure()
         run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json
     
       - name: Upload Artifact GitHub Action
+        if: ${{ (needs.cypress-run.outputs.cy-manual.conclusion == 'success') }}
         uses: actions/upload-artifact@v3
         with: 
           name: unsynced-product-variants-for-download
