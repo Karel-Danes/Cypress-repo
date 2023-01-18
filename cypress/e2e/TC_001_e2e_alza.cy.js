@@ -27,8 +27,7 @@ Cypress.Commands.add('envPrint', () => {
 describe('Testing API expected behavior', () => {
   it.only('step 1 (body length) on ALZA env', () => {
 
-    cy
-      .envPrint()
+  // cy  .envPrint()
 
     cy
       .task('setupMicroServicesCredentials').then(resp => {

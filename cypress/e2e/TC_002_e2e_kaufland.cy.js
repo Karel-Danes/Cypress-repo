@@ -18,8 +18,7 @@ let x = setupMicroServicesInvolved()
 
 describe('Testing API expected behavior', () => {
   it.only('step 1 (body length) on KAUFLAND env', () => {
-    cy
-      .envPrint()
+   // cy   .envPrint()
       
     cy
       .task('setupMicroServicesCredentials').then(resp => {
