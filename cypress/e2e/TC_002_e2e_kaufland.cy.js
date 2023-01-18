@@ -14,7 +14,7 @@ Cypress.Commands.add('envPrint', () => {
   cy
     .task('envPrint', {})
 })
-let x = setupMicroServicesInvolved()
+//let x = setupMicroServicesInvolved()
 
 describe('Testing API expected behavior', () => {
   it.only('step 1 (body length) on KAUFLAND env', () => {
