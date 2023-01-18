@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-const fs = require('fs');
+//const fs = require('fs');
 
 import { mongoUrlStringParser, setupMicroServicesInvolved } from "./../support/parent_functions"
 const fixtures = require('../fixtures/fixtures')
