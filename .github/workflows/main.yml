@@ -114,7 +114,7 @@ jobs:
         run: echo "${{toJSON(steps.cypress-e2e-manual.conclusion)}}"
 
       - name: Create artifact package
-        if: ${{steps.cypress-e2e-manual.conclusion == 'failure'}}
+        if: always() && steps.cypress-e2e-manual.conclusion == 'failure'
         run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json
 
       - name: Upload Artifact GitHub Action
