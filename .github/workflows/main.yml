@@ -113,15 +113,28 @@ jobs:
         if: always()
         run: echo "${{toJSON(steps.cypress-e2e-manual.conclusion)}}"
 
-      - name: Create artifact package
+      - name: Create artifact package (unsynced product variants)
         if: always() && steps.cypress-e2e-manual.conclusion == 'failure'
         run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json ./logs
 
-      - name: Upload Artifact GitHub Action
+      - name: Create artifact package (logs)
+        if: always() 
+        run: tar -cf fullLogs.tar ./logs
+
+      - name: Upload Artifact (unsynced product variants)
         if: always() && steps.cypress-e2e-manual.conclusion == 'failure'
         uses: actions/upload-artifact@v3
         with:
           name: unsynced-product-variants-for-download
           path: nonSyncedProducts.tar
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Upload Artifact (logs)
+        if: always() 
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-mongo-logs-for-download
+          path: fullLogs.tar
           retention-days: 30
           if-no-files-found: ignore
