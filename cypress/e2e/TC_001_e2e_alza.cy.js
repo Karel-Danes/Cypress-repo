@@ -23,11 +23,17 @@ Cypress.Commands.add('envPrint', () => {
     .task('envPrint', {})
 })
 //let x = setupMicroServicesInvolved()
+let dataToWrite = {
+  AHOJ: 123456789
+}
 
 describe('Testing API expected behavior', () => {
   it.only('step 1 (body length) on ALZA env', () => {
 
-  // cy  .envPrint()
+    // cy  .envPrint()
+
+    cy
+      .writeFile('./cache_data/cache.json', dataToWrite)
 
     cy
       .task('setupMicroServicesCredentials').then(resp => {
