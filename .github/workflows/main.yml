@@ -118,7 +118,7 @@ jobs:
         run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json
 
       - name: Upload Artifact GitHub Action
-        if: ${{steps.cypress-e2e-manual.conclusion != 'failure'}}
+        if: always() && steps.cypress-e2e-manual.conclusion == 'failure'
         uses: actions/upload-artifact@v3
         with:
           name: unsynced-product-variants-for-download
