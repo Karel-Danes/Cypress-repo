@@ -115,7 +115,7 @@ jobs:
 
       - name: Create artifact package
         if: always() && steps.cypress-e2e-manual.conclusion == 'failure'
-        run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json
+        run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json ./logs
 
       - name: Upload Artifact GitHub Action
         if: always() && steps.cypress-e2e-manual.conclusion == 'failure'
