@@ -114,11 +114,11 @@ jobs:
         run: echo "${{toJSON(steps.cypress-e2e-manual.conclusion)}}"
 
       - name: Create artifact package
-        if: ${{steps.cypress-e2e-manual.conclusion != 'success'}}
+        if: ${{steps.cypress-e2e-manual.conclusion == 'failure'}}
         run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json
 
       - name: Upload Artifact GitHub Action
-        if: ${{steps.cypress-e2e-manual.conclusion != 'success'}}
+        if: ${{steps.cypress-e2e-manual.conclusion != 'failure'}}
         uses: actions/upload-artifact@v3
         with:
           name: unsynced-product-variants-for-download
