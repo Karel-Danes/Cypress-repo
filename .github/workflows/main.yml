@@ -111,7 +111,7 @@ jobs:
 
       - name: Create artifact package (nonsynced product variants)
         if: always() && (steps.cypress-e2e-manual.conclusion == 'failure' || steps.cypress-remote-dispatch.conclusion == 'failure')
-        run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json ./logs
+        run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json 
 
       - name: Create artifact package (logs)
         if: always() 
