@@ -16,7 +16,7 @@ on:
       randomizer_active:
         description: "Products variants randomizer engaging"
         required: false
-        type: string
+        type: boolean
 
       products_amount:
         description: "number of simulated product variants"
