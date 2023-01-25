@@ -18,17 +18,12 @@ on:
         required: false
         type: boolean
 
-      products_amount:
-        description: "number of simulated product variants"
-        required: false
-        type: string
-
       test_case:
         description: "test cases"
         required: false
         type: string
         #default: "alza"
-        
+
       products_qtty:
         description: "number(=> parseInt()) of simulated product variants"
         required: false
