@@ -28,6 +28,21 @@ on:
         required: false
         type: string
         #default: "alza"
+        
+      products_qtty:
+        description: "number(=> parseInt()) of simulated product variants"
+        required: false
+        type: string
+
+      cut_qtty:
+        description: "number(=> parseInt()) of db cut product variants"
+        required: false
+        type: string
+
+      cut_active:
+        description: "logic (yes/no) of shortening sequence"
+        required: false
+        type: boolean
   push:
 
 jobs:

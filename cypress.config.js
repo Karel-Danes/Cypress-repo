@@ -50,9 +50,6 @@ const randomizerActive = booleanParser(process.env.CYPRESS_RANDOMIZER_ACTIVE);
 const envService = extractServiceName(process.env.CYPRESS_TEST_CASE);
 
 
-
-
-
 function inputsValidator() {
 
 }
