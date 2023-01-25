@@ -3,21 +3,58 @@ const { defineConfig } = require("cypress");
 let today = new Date();
 require('dotenv').config()
 
+function readCredentials() {
+  let output = fs.readFileSync('./cypress/fixtures/microServicesCredencials.json');
+  return output;
+}
+
+
+function tryToFindServiceName(param) {
+  let serviceNamefound
+  if (param.includes("/")) {
+    serviceNamefound = (param.split("/"))[1]
+  } else {
+    serviceNamefound = param
+  }
+  return serviceNamefound;
+}
+
+function extractServiceName(param) {
+  let result = param.split("_")
+  return result[3]
+}
+
 function booleanParser(param) {
   string = param
   switch (string.toLowerCase()) {
     case "false":
+    case "no":
+    case "0":
       return false
     case "true":
+    case "yes":
+    case "1":
       return true
     default:
       return param;
   }
 }
 
-function readCredentials() {
-  let output = fs.readFileSync('./cypress/fixtures/microServicesCredencials.json');
-  return output;
+const TEST_CASE = extractServiceName(process.env.CYPRESS_TEST_CASE)
+const CUT_ACTIVE = booleanParser(process.env.CYPRESS_CUT_ACTIVE)
+const CUT_QTTY = parseInt(process.env.CYPRESS_CUT_QTTY)
+const FEATURE_BRANCH_VERSION = process.env.CYPRESS_FEATURE_BRANCH_VERSION
+const SERVICE_NAME = tryToFindServiceName(process.env.CYPRESS_SERVICE_NAME);
+const productsAmount = parseInt(process.env.CYPRESS_PRODUCTS_QTTY);
+const randomizerActive = booleanParser(process.env.CYPRESS_RANDOMIZER_ACTIVE);
+const envService = extractServiceName(process.env.CYPRESS_TEST_CASE);
+
+
+
+
+
+function inputsValidator() {
+
 }
 
 module.exports = defineConfig({
