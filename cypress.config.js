@@ -51,6 +51,12 @@ const envService = extractServiceName(process.env.CYPRESS_TEST_CASE);
 
 
 function inputsValidator() {
+  if(typeof(CUT_QTTY) != 'number') {
+    console.log("NOT A NUMBER!!!!!!!!!!! ")
+  } else if(typeof(CUT_QTTY) == 'number') {
+    console.log("YES IT'S A NUMBER!!!!!!!!!!! ")
+
+  }
 
 }
 
