@@ -127,8 +127,8 @@ module.exports = defineConfig({
       on('task', {
         setupMicroServicesCredentials() {
           return new Promise((resolve, reject) => {
+            inputsValidator();
             let output = fs.readFileSync('./cypress/fixtures/microServicesCredentials.json', { encoding: 'utf8', flag: 'r' })
-            
             resolve(output);
 
           })
