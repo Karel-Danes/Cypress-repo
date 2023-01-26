@@ -53,9 +53,9 @@ const envService = extractServiceName(process.env.CYPRESS_TEST_CASE);
 function inputsValidator() {
   if(typeof(CUT_QTTY) != 'number') {
     console.log(`NOT A NUMBER!!!!!!!!!!! ${CUT_QTTY}`)
-  } else if(typeof(CUT_QTTY) == 'number' && CUT_QTTY != 'NaN') {
+  } else if(typeof(CUT_QTTY) == 'number' && isNaN(parseFloat(CUT_QTTY)) != true) {
     console.log(`YES IT'S A NUMBER!!!!!!!!!!! ${CUT_QTTY}`)
-  } else if(typeof(CUT_QTTY) == 'number' && CUT_QTTY == 'NaN') {
+  } else if(typeof(CUT_QTTY) == 'number' && isNaN(parseFloat(CUT_QTTY)) == true) {
     console.log(`OPS IT'S A NaN!!!!!!!!!!! ${CUT_QTTY}`)
 
   }
