@@ -41,7 +41,7 @@ on:
   push:
 
 jobs:
-  cypress-run:
+  cypress-run-alza:
     # outputs:
     # cy-manual: ${{steps.cypress-e2e-manual.outputs}}
     # cy-remote: ${{steps.cypress-remote-dispatch.outputs}}
@@ -146,3 +146,13 @@ jobs:
           path: fullLogs.tar
           retention-days: 30
           if-no-files-found: ignore
+
+  cypress-run-kaufland:
+    runs-on: ubuntu-latest
+    steps:
+      - name: console (job forking)
+        run: |
+          echo "HELEMESE ${{github.event_name}}"
+        
+        
+    
