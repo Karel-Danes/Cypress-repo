@@ -1,0 +1,159 @@
+name: 🧪 E2E product sync build->
+on:
+  workflow_dispatch:
+    inputs:
+      test_feature_branch_version:
+        description: "Particular merge request db name."
+        required: false
+        #default: "test-alza-service"
+        type: string
+
+      service_name:
+        description: "name of calling respository"
+        required: false
+        type: string
+
+      randomizer_active:
+        description: "Products variants randomizer engaging"
+        required: false
+        type: boolean
+
+      test_case:
+        description: "test cases"
+        required: false
+        type: string
+        #default: "alza"
+
+      products_qtty:
+        description: "number(=> parseInt()) of simulated product variants"
+        required: false
+        type: string
+
+      CUT_QTTY:
+        description: "number(=> parseInt()) of db cut product variants"
+        required: false
+        type: string
+
+      cut_active:
+        description: "logic (yes/no) of shortening sequence"
+        required: false
+        type: boolean
+  push:
+
+jobs:
+  cypress-run-alza:
+    # outputs:
+    # cy-manual: ${{steps.cypress-e2e-manual.outputs}}
+    # cy-remote: ${{steps.cypress-remote-dispatch.outputs}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Caches
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/Cypress
+            build
+            node_modules
+          key: ${{ runner.os }}-node_modules-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-build-
+
+      - name: Status check and cache update.
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          echo "inputs ${{ toJSON(inputs) }}"
+          echo "event name: ${{github.event_name}}"
+          echo "CYPRESS_FEATURE_BRANCH_VERSION=${{ toJSON(github.event.inputs.test_feature_branch_version) }}" >> $GITHUB_ENV
+          echo "CYPRESS_SERVICE_NAME=${{ toJSON(github.event.inputs.service_name) }}" >> $GITHUB_ENV
+          echo "CYPRESS_RANDOMIZER_ACTIVE=${{ toJSON(github.event.inputs.randomizer_active) }}" >> $GITHUB_ENV
+          echo "CYPRESS_PRODUCTS_QTTY=${{ toJSON(github.event.inputs.products_qtty) }}" >> $GITHUB_ENV
+          echo "CYPRESS_TEST_CASE=${{ toJSON(github.event.inputs.test_case) }}" >> $GITHUB_ENV
+          echo "CYPRESS_CUT_ACTIVE=${{ toJSON(github.event.inputs.cut_active) }}" >> $GITHUB_ENV
+          echo "CYPRESS_CUT_QTTY=${{ toJSON(github.event.inputs.cut_qtty) }}" >> $GITHUB_ENV
+          echo "E2E_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+
+      - name: dotenv-action (process.env access)
+        if: ${{ github.event_name != 'workflow_dispatch' }}
+        id: dotenv
+        uses: falti/dotenv-action@v1.0.2
+
+      - name: Set environment variables
+        if: ${{ github.event_name != 'workflow_dispatch' }}
+        run: |
+          echo "event name: ${{github.event_name}}"
+          echo "E2E_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+          cat .env
+
+      - name: Install root dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Cypress run (manual trigger .env source)
+        if: ${{ (github.event_name != 'workflow_dispatch') }}
+        uses: cypress-io/github-action@v4
+        id: cypress-e2e-manual
+        with:
+          env: true
+          install: false
+          browser: electron
+          headed: false
+          spec: cypress/e2e/${{ steps.dotenv.outputs.CYPRESS_TEST_CASE }}.cy.js
+        #env:
+        # CYPRESS_TEST_CASE: ${{env.CYPRESS_TEST_CASE}}
+        # CYPRESS_FEATURE_BRANCH_VERSION: ${{env.CYPRESS_FEATURE_BRANCH_VERSION}}
+
+      - name: Cypress run (remote dispatch trigger)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        uses: cypress-io/github-action@v4
+        id: cypress-remote-dispatch
+        with:
+          install: false
+          #config: video=false, screenshotOnRunFailure=false
+          browser: electron
+          headed: false
+          spec: cypress/e2e/${{ env.CYPRESS_TEST_CASE}}.cy.js
+        env:
+          CYPRESS_TEST_CASE: ${{env.CYPRESS_TEST_CASE}}
+          CYPRESS_FEATURE_BRANCH_VERSION: ${{env.CYPRESS_FEATURE_BRANCH_VERSION}}
+          CYPRESS_SERVICE_NAME: ${{env.CYPRESS_SERVICE_NAME}}
+          CYPRESS_RANDOMIZER_ACTIVE: ${{env.CYPRESS_RANDOMIZER_ACTIVE}}
+          CYPRESS_PRODUCTS_AMOUNT: ${{env.CYPRESS_PRODUCTS_AMOUNT}}
+
+      - name: Create artifact package (nonsynced product variants)
+        if: always() && (steps.cypress-e2e-manual.conclusion == 'failure' || steps.cypress-remote-dispatch.conclusion == 'failure')
+        run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json 
+
+      - name: Create artifact package (logs)
+        if: always() 
+        run: tar -cf fullLogs.tar ./logs
+
+      - name: Upload Artifact (nonsynced product variants)
+        if: always() && (steps.cypress-e2e-manual.conclusion == 'failure' || steps.cypress-remote-dispatch.conclusion == 'failure')
+        uses: actions/upload-artifact@v3
+        with:
+          name: unsynced-product-variants-for-download
+          path: nonSyncedProducts.tar
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Upload Artifact (logs)
+        if: always() 
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-mongo-logs-for-download
+          path: fullLogs.tar
+          retention-days: 30
+          if-no-files-found: ignore
+
+  cypress-run-kaufland:
+    needs: cypress-run-alza
+    runs-on: ubuntu-latest
+    steps:
+      - name: console (job forking)
+        run: |
+          echo "HELEMESE ${{github.event_name}}"
+        
+        
+    
