@@ -123,10 +123,10 @@ jobs:
 
       - name: Create artifact package (nonsynced product variants)
         if: always() && (steps.cypress-e2e-manual.conclusion == 'failure' || steps.cypress-remote-dispatch.conclusion == 'failure')
-        run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json 
+        run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json
 
       - name: Create artifact package (logs)
-        if: always() 
+        if: always()
         run: tar -cf fullLogs.tar ./logs
 
       - name: Upload Artifact (nonsynced product variants)
@@ -139,7 +139,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload Artifact (logs)
-        if: always() 
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: cypress-mongo-logs-for-download
@@ -148,28 +148,28 @@ jobs:
           if-no-files-found: ignore
 
   cypress-run-kaufland:
-    needs: cypress-run-alza
+    #needs: cypress-run-alza
     runs-on: ubuntu-latest
     steps:
       - name: console (job forking)
+        if: ${{ github.event.inputs.test_case == "TC_002_e2e_kaufland" }}
         run: |
           echo "HELEMESE ${{github.event_name}}"
 
   cypress-run-shoptet:
-    needs: cypress-run-kaufland
+    #needs: cypress-run-kaufland
     runs-on: ubuntu-latest
     steps:
       - name: console (job forking)
+        if: ${{ github.event.inputs.test_case == "TC_003_e2e_shoptet" }}
         run: |
           echo "HELEMESE ${{github.event_name}}"
 
   cypress-run-cdiscount:
-    needs: cypress-run-shoptet
+    # needs: cypress-run-shoptet
     runs-on: ubuntu-latest
     steps:
       - name: console (job forking)
+        if: ${{ github.event.inputs.test_case == "TC_004_e2e_cdiscount" }}
         run: |
           echo "HELEMESE ${{github.event_name}}"
-        
-        
-    
