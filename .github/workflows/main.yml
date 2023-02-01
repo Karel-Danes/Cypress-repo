@@ -148,6 +148,7 @@ jobs:
           if-no-files-found: ignore
 
   cypress-run-kaufland:
+    if: ${{ github.event.inputs.test_case == 'TC_002_e2e_kaufland' }}
     #needs: cypress-run-alza
     runs-on: ubuntu-latest
     steps:
