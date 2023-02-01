@@ -43,11 +43,14 @@ on:
 jobs:
   dotenv-setup:
     runs-on: ubuntu-latest
+    outputs:
+      loaded-env: ${{ steps.dotenv.outputs.env}}
     steps:
-      - name: dotenv-action (process.env access)
-        if: ${{ github.event_name != 'workflow_dispatch' }}
-        id: dotenv-global
+      - id: dotenv-start
         uses: falti/dotenv-action@v1.0.2
+      - id: dotenv
+        run: |
+          echo "${{ toJSON(steps.dotenv-start.outputs) }}"  
 
   cypress-run-alza:
     # outputs:
