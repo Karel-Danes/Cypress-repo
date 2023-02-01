@@ -148,31 +148,28 @@ jobs:
           if-no-files-found: ignore
 
   cypress-run-kaufland:
-    if: ${{ github.event.inputs.test_case == 'TC_002_e2e_kaufland' }}
+    if: ${{ steps.dotenv.outputs.CYPRESS_TEST_CASE == 'TC_002_e2e_kaufland' }}
     #needs: cypress-run-alza
     runs-on: ubuntu-latest
     steps:
       - name: console (job forking)
-        if: ${{ github.event.inputs.test_case == 'TC_002_e2e_kaufland' }}
         run: |
           echo "HELEMESE ${{github.event_name}}"
 
   cypress-run-shoptet:
-    if: ${{ github.event.inputs.test_case == 'TC_003_e2e_shoptet' }}
+    if: ${{ steps.dotenv.outputs.CYPRESS_TEST_CASE == 'TC_003_e2e_shoptet' }}
     #needs: cypress-run-kaufland
     runs-on: ubuntu-latest
     steps:
       - name: console (job forking)
-        if: ${{ github.event.inputs.test_case == 'TC_003_e2e_shoptet' }}
         run: |
           echo "HELEMESE ${{github.event_name}}"
 
   cypress-run-cdiscount:
-    if: ${{ github.event.inputs.test_case == 'TC_004_e2e_cdiscount' }}
+    if: ${{ steps.dotenv.outputs.CYPRESS_TEST_CASE == 'TC_004_e2e_cdiscount' }}
     # needs: cypress-run-shoptet
     runs-on: ubuntu-latest
     steps:
       - name: console (job forking)
-        if: ${{ github.event.inputs.test_case == 'TC_004_e2e_cdiscount' }}
         run: |
           echo "HELEMESE ${{github.event_name}}"
