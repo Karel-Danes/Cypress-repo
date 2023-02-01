@@ -154,6 +154,22 @@ jobs:
       - name: console (job forking)
         run: |
           echo "HELEMESE ${{github.event_name}}"
+
+  cypress-run-shoptet:
+    needs: cypress-run-kaufland
+    runs-on: ubuntu-latest
+    steps:
+      - name: console (job forking)
+        run: |
+          echo "HELEMESE ${{github.event_name}}"
+
+  cypress-run-cdiscount:
+    needs: cypress-run-shoptet
+    runs-on: ubuntu-latest
+    steps:
+      - name: console (job forking)
+        run: |
+          echo "HELEMESE ${{github.event_name}}"
         
         
     
