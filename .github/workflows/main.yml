@@ -152,7 +152,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: console (job forking)
-        if: ${{ github.event.inputs.test_case == "TC_002_e2e_kaufland" }}
+        if: ${{ github.event.inputs.test_case == 'TC_002_e2e_kaufland' }}
         run: |
           echo "HELEMESE ${{github.event_name}}"
 
@@ -161,7 +161,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: console (job forking)
-        if: ${{ github.event.inputs.test_case == "TC_003_e2e_shoptet" }}
+        if: ${{ github.event.inputs.test_case == 'TC_003_e2e_shoptet' }}
         run: |
           echo "HELEMESE ${{github.event_name}}"
 
@@ -170,6 +170,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: console (job forking)
-        if: ${{ github.event.inputs.test_case == "TC_004_e2e_cdiscount" }}
+        if: ${{ github.event.inputs.test_case == 'TC_004_e2e_cdiscount' }}
         run: |
           echo "HELEMESE ${{github.event_name}}"
