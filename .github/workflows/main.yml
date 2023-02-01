@@ -41,6 +41,14 @@ on:
   push:
 
 jobs:
+  dotenv-setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: dotenv-action (process.env access)
+        if: ${{ github.event_name != 'workflow_dispatch' }}
+        id: dotenv
+        uses: falti/dotenv-action@v1.0.2
+
   cypress-run-alza:
     # outputs:
     # cy-manual: ${{steps.cypress-e2e-manual.outputs}}
@@ -75,10 +83,10 @@ jobs:
           echo "CYPRESS_CUT_QTTY=${{ toJSON(github.event.inputs.cut_qtty) }}" >> $GITHUB_ENV
           echo "E2E_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
-      - name: dotenv-action (process.env access)
-        if: ${{ github.event_name != 'workflow_dispatch' }}
-        id: dotenv
-        uses: falti/dotenv-action@v1.0.2
+     # - name: dotenv-action (process.env access)
+     #   if: ${{ github.event_name != 'workflow_dispatch' }}
+     #   id: dotenv
+     #   uses: falti/dotenv-action@v1.0.2
 
       - name: Set environment variables
         if: ${{ github.event_name != 'workflow_dispatch' }}
