@@ -156,16 +156,16 @@ jobs:
           if-no-files-found: ignore
 
   cypress-run-kaufland:
-    if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_002_e2e_kaufland' }}
+   # if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_002_e2e_kaufland' }}
     #needs: cypress-run-alza
     runs-on: ubuntu-latest
     steps:
       - name: console (job forking)
         run: |
-          echo "HELEMESE ${{github.event_name}}"
+          echo "HELEMESE ${{toJSON(jobs.dotenv-setup.outputs)}}"
 
   cypress-run-shoptet:
-    if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_003_e2e_shoptet' }}
+   # if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_003_e2e_shoptet' }}
     #needs: cypress-run-kaufland
     runs-on: ubuntu-latest
     steps:
