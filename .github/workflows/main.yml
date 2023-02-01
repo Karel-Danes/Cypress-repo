@@ -170,7 +170,7 @@ jobs:
     steps:
       - name: console (dotenv reading)
         run: |
-          echo "HELEMESE ${{ toJSON(needs.dotenv-setup.outputs.env)}}"
+          echo "HELEMESE ${{ toJSON(needs.dotenv-setup.outputs.loaded-env)}}"
 
   cypress-run-shoptet:
     # if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_003_e2e_shoptet' }}
