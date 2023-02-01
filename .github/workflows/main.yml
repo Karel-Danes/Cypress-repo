@@ -48,13 +48,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        
-      - id: dotenv-start
+
+      - id: dotenv-load
         uses: falti/dotenv-action@v1.0.2
       - id: dotenv
         run: |
           cat .env
-          echo "${{ toJSON(steps.dotenv-start.outputs) }}"  
+          echo "${{ toJSON(steps.dotenv-load.outputs) }}"  
 
   cypress-run-alza:
     # outputs:
@@ -164,12 +164,12 @@ jobs:
 
   cypress-run-kaufland:
    # if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_002_e2e_kaufland' }}
-    #needs: cypress-run-alza
+    needs: dotenv-setup
     runs-on: ubuntu-latest
     steps:
-      - name: console (job forking)
+      - name: console (dotenv reading)
         run: |
-          echo "HELEMESE "
+          echo "HELEMESE ${{ needs.dotenv-setup.outputs.}}"
 
   cypress-run-shoptet:
    # if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_003_e2e_shoptet' }}
