@@ -44,7 +44,7 @@ jobs:
   dotenv-setup:
     runs-on: ubuntu-latest
     outputs:
-      loaded-env: ${{ steps.dotenv.outputs.env}}
+      loaded-env: ${{ steps.dotenv.outputs.env }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -54,7 +54,8 @@ jobs:
       - id: dotenv
         run: |
           cat .env
-          echo "${{ toJSON(steps.dotenv-load.outputs) }}"  
+          echo "${{ toJSON(steps.dotenv-load.outputs) }}"
+          echo "env=${{steps.dotenv-load.outputs}}" >> $GITHUB_OUTPUT
 
   cypress-run-alza:
     # outputs:
@@ -163,21 +164,19 @@ jobs:
           if-no-files-found: ignore
 
   cypress-run-kaufland:
-   # if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_002_e2e_kaufland' }}
+    # if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_002_e2e_kaufland' }}
     needs: dotenv-setup
     runs-on: ubuntu-latest
     steps:
       - name: console (dotenv reading)
         run: |
-          echo "HELEMESE ${{ toJSON(needs.dotenv-setup.outputs)}}"
+          echo "HELEMESE ${{ toJSON(needs.dotenv-setup.outputs.env)}}"
 
   cypress-run-shoptet:
-   # if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_003_e2e_shoptet' }}
+    # if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_003_e2e_shoptet' }}
     #needs: cypress-run-kaufland
     runs-on: ubuntu-latest
     steps:
       - name: console (job forking)
         run: |
           echo "HELEMESE ${{github.event_name}}"
-
-
