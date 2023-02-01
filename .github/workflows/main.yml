@@ -44,7 +44,8 @@ jobs:
   dotenv-setup:
     runs-on: ubuntu-latest
     outputs:
-      loaded-env: ${{ steps.dotenv.outputs.env }}
+      loaded-test-case: ${{ steps.dotenv.outputs.test-case }}
+      loaded-test-feature-branch-version: ${{ steps.dotenv.outputs.test-feature-branch-version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -55,7 +56,9 @@ jobs:
         run: |
           cat .env
           echo "${{ toJSON(steps.dotenv-load.outputs) }}"
-          echo "env=${{steps.dotenv-load.outputs.CYPRESS_TEST_CASE}}" >> $GITHUB_OUTPUT
+          echo "test-case=${{steps.dotenv-load.outputs.CYPRESS_TEST_CASE}}" >> $GITHUB_OUTPUT
+          echo "test-feature-branch-version=${{steps.dotenv-load.outputs.CYPRESS_FEATURE_BRANCH_VERSION}}" >> $GITHUB_OUTPUT
+
 
   cypress-run-alza:
     # outputs:
@@ -170,7 +173,8 @@ jobs:
     steps:
       - name: console (dotenv reading)
         run: |
-          echo "HELEMESE ${{ toJSON(needs.dotenv-setup.outputs.loaded-env)}}"
+          echo "HELEMESE ${{ toJSON(needs.dotenv-setup.outputs.loaded-test-case)}}"
+          echo "HELEMESE ${{ toJSON(needs.dotenv-setup.outputs.loaded-test-feature-branch-version)}}"
 
   cypress-run-shoptet:
     # if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_003_e2e_shoptet' }}
