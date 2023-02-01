@@ -55,7 +55,7 @@ jobs:
         run: |
           cat .env
           echo "${{ toJSON(steps.dotenv-load.outputs) }}"
-          echo "env=${{toJSON(steps.dotenv-load.outputs)}}" >> $GITHUB_OUTPUT
+          echo "env=${{steps.dotenv-load.outputs.CYPRESS_TEST_CASE}}" >> $GITHUB_OUTPUT
 
   cypress-run-alza:
     # outputs:
