@@ -165,7 +165,7 @@ jobs:
     steps:
       - name: console (job forking)
         run: |
-          echo "HELEMESE ${{toJSON(jobs.dotenv-setup.outputs)}}"
+          echo "HELEMESE "
 
   cypress-run-shoptet:
    # if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_003_e2e_shoptet' }}
