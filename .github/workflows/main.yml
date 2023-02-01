@@ -46,7 +46,7 @@ jobs:
     steps:
       - name: dotenv-action (process.env access)
         if: ${{ github.event_name != 'workflow_dispatch' }}
-        id: dotenv
+        id: dotenv-global
         uses: falti/dotenv-action@v1.0.2
 
   cypress-run-alza:
@@ -83,10 +83,10 @@ jobs:
           echo "CYPRESS_CUT_QTTY=${{ toJSON(github.event.inputs.cut_qtty) }}" >> $GITHUB_ENV
           echo "E2E_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
-     # - name: dotenv-action (process.env access)
-     #   if: ${{ github.event_name != 'workflow_dispatch' }}
-     #   id: dotenv
-     #   uses: falti/dotenv-action@v1.0.2
+      - name: dotenv-action (process.env access)
+        if: ${{ github.event_name != 'workflow_dispatch' }}
+        id: dotenv
+        uses: falti/dotenv-action@v1.0.2
 
       - name: Set environment variables
         if: ${{ github.event_name != 'workflow_dispatch' }}
@@ -156,7 +156,7 @@ jobs:
           if-no-files-found: ignore
 
   cypress-run-kaufland:
-    if: ${{ steps.dotenv.outputs.CYPRESS_TEST_CASE == 'TC_002_e2e_kaufland' }}
+    if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_002_e2e_kaufland' }}
     #needs: cypress-run-alza
     runs-on: ubuntu-latest
     steps:
@@ -165,7 +165,7 @@ jobs:
           echo "HELEMESE ${{github.event_name}}"
 
   cypress-run-shoptet:
-    if: ${{ steps.dotenv.outputs.CYPRESS_TEST_CASE == 'TC_003_e2e_shoptet' }}
+    if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_003_e2e_shoptet' }}
     #needs: cypress-run-kaufland
     runs-on: ubuntu-latest
     steps:
@@ -173,11 +173,4 @@ jobs:
         run: |
           echo "HELEMESE ${{github.event_name}}"
 
-  cypress-run-cdiscount:
-    if: ${{ steps.dotenv.outputs.CYPRESS_TEST_CASE == 'TC_004_e2e_cdiscount' }}
-    # needs: cypress-run-shoptet
-    runs-on: ubuntu-latest
-    steps:
-      - name: console (job forking)
-        run: |
-          echo "HELEMESE ${{github.event_name}}"
+
