@@ -90,7 +90,6 @@ jobs:
     needs: dotenv-setup
     if: ${{ needs.dotenv-setup.outputs.loaded-test-case == 'TC_001_e2e_alza' }}
     # outputs:
-    # cy-manual: ${{steps.cypress-e2e-manual.outputs}}
     # cy-remote: ${{steps.cypress-remote-dispatch.outputs}}
     runs-on: ubuntu-latest
     steps:
@@ -125,19 +124,20 @@ jobs:
       - name: Install root dependencies
         uses: bahmutov/npm-install@v1
 
-      - name: Cypress run (manual trigger .env source)
-        if: ${{ (github.event_name != 'workflow_dispatch') }}
-        uses: cypress-io/github-action@v4
-        id: cypress-e2e-manual
-        with:
-          env: true
-          install: false
-          browser: electron
-          headed: false
-          spec: cypress/e2e/${{ needs.dotenv-setup.outputs.loaded-test-case }}.cy.js
+      #- name: Cypress run (manual trigger .env source)
+      #  if: ${{ (github.event_name != 'workflow_dispatch') }}
+      #  uses: cypress-io/github-action@v4
+      #  id: cypress-e2e-manual
+      #  with:
+      #    env: true
+      #    install: false
+      #    browser: electron
+      #    headed: false
+      #    spec: cypress/e2e/${{ needs.dotenv-setup.outputs.loaded-test-case }}.cy.js
         #env:
         # CYPRESS_TEST_CASE: ${{env.CYPRESS_TEST_CASE}}
         # CYPRESS_FEATURE_BRANCH_VERSION: ${{env.CYPRESS_FEATURE_BRANCH_VERSION}}
+
 
       - name: Cypress run (remote dispatch trigger)
         if: ${{ github.event_name == 'workflow_dispatch' }}
@@ -148,7 +148,7 @@ jobs:
           #config: video=false, screenshotOnRunFailure=false
           browser: electron
           headed: false
-          spec: cypress/e2e/${{ env.CYPRESS_TEST_CASE}}.cy.js
+          spec: cypress/e2e/${{ needs.dotenv-setup.outputs.loaded-test-case }}.cy.js
         env:
           CYPRESS_TEST_CASE: ${{needs.dotenv-setup.outputs.loaded-test-case}}
           CYPRESS_FEATURE_BRANCH_VERSION: ${{needs.dotenv-setup.outputs.loaded-test-feature-branch-version}}
@@ -157,7 +157,7 @@ jobs:
           CYPRESS_PRODUCTS_QTTY: ${{needs.dotenv-setup.outputs.loaded-products-qtty}}
 
       - name: Create artifact package (nonsynced product variants)
-        if: always() && (steps.cypress-e2e-manual.conclusion == 'failure' || steps.cypress-remote-dispatch.conclusion == 'failure')
+        if: always() && ( steps.cypress-remote-dispatch.conclusion == 'failure')
         run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json
 
       - name: Create artifact package (logs)
@@ -165,7 +165,7 @@ jobs:
         run: tar -cf fullLogs.tar ./logs
 
       - name: Upload Artifact (nonsynced product variants)
-        if: always() && (steps.cypress-e2e-manual.conclusion == 'failure' || steps.cypress-remote-dispatch.conclusion == 'failure')
+        if: always() && ( steps.cypress-remote-dispatch.conclusion == 'failure')
         uses: actions/upload-artifact@v3
         with:
           name: unsynced-product-variants-for-download
