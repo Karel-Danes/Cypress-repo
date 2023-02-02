@@ -239,7 +239,6 @@ jobs:
         run: |
           echo "${{github.event.prod-sync-e2e-run-shoptet}}"
           echo "${{job.prod-sync-e2e-run-shoptet}}"
-          echo "${{prod-sync-e2e-run-shoptet}}"
 
 
       - name: helemese 2
