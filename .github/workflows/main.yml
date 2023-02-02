@@ -41,9 +41,6 @@ on:
   push:
 
 jobs:
-
-
-
   environment-setup:
     runs-on: ubuntu-latest
     outputs:
@@ -86,12 +83,10 @@ jobs:
           echo "product-qtty=${{ steps.dotenv-load.outputs.CYPRESS_PRODUCTS_QTTY }}" >> $GITHUB_OUTPUT
           echo "cut-active=${{ steps.dotenv-load.outputs.CYPRESS_CUT_ACTIVE }}" >> $GITHUB_OUTPUT
           echo "cut-qtty=${{ steps.dotenv-load.outputs.CYPRESS_CUT_QTTY }}" >> $GITHUB_OUTPUT
-  
+
       - id: inner-data
         run: |
-          echo "${{ steps.dotenv-load.outputs.CYPRESS_TEST_CASE}}" 
-       
-
+          echo "${{ steps.dotenv-load.outputs.CYPRESS_TEST_CASE}}"
 
   prod-sync-e2e-run-alza:
     needs: environment-setup
@@ -112,10 +107,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node_modules-build-
 
-
       - name: Install root dependencies
         uses: bahmutov/npm-install@v1
-
 
       - name: Cypress run (all calling scenarios)
         uses: cypress-io/github-action@v4
@@ -132,8 +125,6 @@ jobs:
           CYPRESS_SERVICE_NAME: ${{needs.environment-setup.outputs.loaded-service-name}}
           CYPRESS_RANDOMIZER_ACTIVE: ${{needs.environment-setup.outputs.loaded-randomizer-active}}
           CYPRESS_PRODUCTS_QTTY: ${{needs.environment-setup.outputs.loaded-products-qtty}}
-
-
 
   prod-sync-e2e-run-kaufland:
     needs: environment-setup
@@ -156,7 +147,6 @@ jobs:
 
       - name: Install root dependencies
         uses: bahmutov/npm-install@v1
-
 
       - name: Cypress run (all calling scenarios)
         uses: cypress-io/github-action@v4
@@ -185,10 +175,19 @@ jobs:
           echo "HELEMESE ${{needs.environment-setup.outputs.loaded-test-case}}"
 
   testing-cancel:
-    needs: [environment-setup, prod-sync-e2e-run-shoptet, prod-sync-e2e-run-kaufland, prod-sync-e2e-run-alza]
+    needs:
+      [
+        environment-setup,
+        prod-sync-e2e-run-shoptet,
+        prod-sync-e2e-run-kaufland,
+        prod-sync-e2e-run-alza,
+      ]
     if: always()
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: helemese
         run: |
           echo "${{needs.prod-sync-e2e-run-shoptet.result}}"
@@ -224,4 +223,3 @@ jobs:
           path: fullLogs.tar
           retention-days: 30
           if-no-files-found: ignore
-     
