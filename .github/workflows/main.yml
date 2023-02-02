@@ -133,7 +133,7 @@ jobs:
           install: false
           browser: electron
           headed: false
-          spec: cypress/e2e/${{ steps.dotenv.outputs.CYPRESS_TEST_CASE }}.cy.js
+          spec: cypress/e2e/${{ needs.dotenv-setup.outputs.loaded-test-case }}.cy.js
         #env:
         # CYPRESS_TEST_CASE: ${{env.CYPRESS_TEST_CASE}}
         # CYPRESS_FEATURE_BRANCH_VERSION: ${{env.CYPRESS_FEATURE_BRANCH_VERSION}}
