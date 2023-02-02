@@ -232,12 +232,14 @@ jobs:
           echo "HELEMESE ${{needs.environment-setup.outputs.loaded-test-case}}"
 
   testing-cancel:
-    needs: [environment-setup, prod-sync-e2e-run-shoptet]
+    needs: [environment-setup, prod-sync-e2e-run-shoptet, prod-sync-e2e-run-kaufland]
     runs-on: ubuntu-latest
     steps:
       - name: helemese
         run: |
           echo "${{needs.prod-sync-e2e-run-shoptet.result}}"
+          echo "${{needs.prod-sync-e2e-run-kaufland.result}}"
+
 
 
       - name: helemese 2
