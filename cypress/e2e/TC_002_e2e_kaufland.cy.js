@@ -104,7 +104,7 @@ describe('Testing API expected behavior', () => {
         url: Cypress.env('baseUrl')
       }).then((resp) => {
         expect(resp.body).to.exist
-        expect(resp.status).to.eq(200)
+        expect(resp.status).to.eq(300)
         // written in new-feature-branch
 
       })

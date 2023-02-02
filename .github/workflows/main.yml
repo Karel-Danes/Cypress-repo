@@ -133,31 +133,7 @@ jobs:
           CYPRESS_RANDOMIZER_ACTIVE: ${{needs.environment-setup.outputs.loaded-randomizer-active}}
           CYPRESS_PRODUCTS_QTTY: ${{needs.environment-setup.outputs.loaded-products-qtty}}
 
-      - name: Create artifact package (nonsynced product variants)
-        if: always() && ( steps.cypress-alza.conclusion == 'failure')
-        run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json
 
-      - name: Create artifact package (logs)
-        if: always()
-        run: tar -cf fullLogs.tar ./logs
-
-      - name: Upload Artifact (nonsynced product variants)
-        if: always() && ( steps.cypress-alza.conclusion == 'failure')
-        uses: actions/upload-artifact@v3
-        with:
-          name: unsynced-product-variants-for-download
-          path: nonSyncedProducts.tar
-          retention-days: 30
-          if-no-files-found: ignore
-
-      - name: Upload Artifact (logs)
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: cypress-mongo-logs-for-download
-          path: fullLogs.tar
-          retention-days: 30
-          if-no-files-found: ignore
 
   prod-sync-e2e-run-kaufland:
     needs: environment-setup
@@ -198,34 +174,6 @@ jobs:
           CYPRESS_RANDOMIZER_ACTIVE: ${{needs.environment-setup.outputs.loaded-randomizer-active}}
           CYPRESS_PRODUCTS_QTTY: ${{needs.environment-setup.outputs.loaded-products-qtty}}
 
-      - name: Create artifact package (nonsynced product variants)
-        if: always() && ( steps.cypress-kaufland.conclusion == 'failure')
-        run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json
-
-      - name: Create artifact package (logs)
-        if: always()
-        run: tar -cf fullLogs.tar ./logs
-
-      - name: Upload Artifact (nonsynced product variants)
-        if: always() && ( steps.cypress-kaufland.conclusion == 'failure')
-        uses: actions/upload-artifact@v3
-        with:
-          name: unsynced-product-variants-for-download
-          path: nonSyncedProducts.tar
-          retention-days: 30
-          if-no-files-found: ignore
-
-      - name: Upload Artifact (logs)
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: cypress-mongo-logs-for-download
-          path: fullLogs.tar
-          retention-days: 30
-          if-no-files-found: ignore
-
-
-
   prod-sync-e2e-run-shoptet:
     needs: environment-setup
     if: ${{ needs.environment-setup.outputs.loaded-test-case == 'TC_003_e2e_shoptet' }}
@@ -246,10 +194,34 @@ jobs:
           echo "${{needs.prod-sync-e2e-run-shoptet.result}}"
           echo "${{needs.prod-sync-e2e-run-kaufland.result}}"
 
-
-
       - name: helemese 2
         if: ${{ needs.prod-sync-e2e-run-shoptet.result == 'success' }}
         run: |
           echo "was super"
+
+      - name: Create artifact package (nonsynced product variants)
+        if: always() && ( needs.prod-sync-e2e-run-alza.result == 'failure' || needs.prod-sync-e2e-run-kaufland.result == 'failure' || needs.prod-sync-e2e-run-shoptet.result == 'failure')
+        run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json
+
+      - name: Create artifact package (logs)
+        if: always()
+        run: tar -cf fullLogs.tar ./logs
+
+      - name: Upload Artifact (nonsynced product variants)
+        if: always() && ( needs.prod-sync-e2e-run-alza.result == 'failure' || needs.prod-sync-e2e-run-kaufland.result == 'failure' || needs.prod-sync-e2e-run-shoptet.result == 'failure')
+        uses: actions/upload-artifact@v3
+        with:
+          name: unsynced-product-variants-for-download
+          path: nonSyncedProducts.tar
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Upload Artifact (logs)
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-mongo-logs-for-download
+          path: fullLogs.tar
+          retention-days: 30
+          if-no-files-found: ignore
      
