@@ -42,25 +42,51 @@ on:
 
 jobs:
   dotenv-setup:
+    if: (github.event != 'workflow_dispatch')
     runs-on: ubuntu-latest
     outputs:
       loaded-test-case: ${{ steps.dotenv.outputs.test-case }}
       loaded-test-feature-branch-version: ${{ steps.dotenv.outputs.test-feature-branch-version }}
+      loaded-service-name: ${{ steps.dotenv.outputs.service-name }}
+      loaded-randomizer-active: ${{ steps.dotenv.outputs.randomizer-active }}
+      loaded-products-qtty: ${{ steps.dotenv.outputs.product-qtty }}
+      loaded-cut-active: ${{ steps.dotenv.outputs.cut-active }}
+      loaded-cut-qtty: ${{ steps.dotenv.outputs.cut-qtty }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Status check and cache update.
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          echo "inputs ${{ toJSON(inputs) }}"
+          echo "event name: ${{github.event_name}}"
+          echo "CYPRESS_FEATURE_BRANCH_VERSION=${{ toJSON(github.event.inputs.test_feature_branch_version) }}" >> $GITHUB_ENV
+          echo "CYPRESS_SERVICE_NAME=${{ toJSON(github.event.inputs.service_name) }}" >> $GITHUB_ENV
+          echo "CYPRESS_RANDOMIZER_ACTIVE=${{ toJSON(github.event.inputs.randomizer_active) }}" >> $GITHUB_ENV
+          echo "CYPRESS_PRODUCTS_QTTY=${{ toJSON(github.event.inputs.products_qtty) }}" >> $GITHUB_ENV
+          echo "CYPRESS_TEST_CASE=${{ toJSON(github.event.inputs.test_case) }}" >> $GITHUB_ENV
+          echo "CYPRESS_CUT_ACTIVE=${{ toJSON(github.event.inputs.cut_active) }}" >> $GITHUB_ENV
+          echo "CYPRESS_CUT_QTTY=${{ toJSON(github.event.inputs.cut_qtty) }}" >> $GITHUB_ENV
+          echo "E2E_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
       - id: dotenv-load
         uses: falti/dotenv-action@v1.0.2
       - id: dotenv
         run: |
           cat .env
-          echo "${{ toJSON(steps.dotenv-load.outputs) }}"
-          echo "test-case=${{steps.dotenv-load.outputs.CYPRESS_TEST_CASE}}" >> $GITHUB_OUTPUT
-          echo "test-feature-branch-version=${{steps.dotenv-load.outputs.CYPRESS_FEATURE_BRANCH_VERSION}}" >> $GITHUB_OUTPUT
+          echo "test-case=${{ steps.dotenv-load.outputs.CYPRESS_TEST_CASE }}" >> $GITHUB_OUTPUT
+          echo "test-feature-branch-version=${{ steps.dotenv-load.outputs.CYPRESS_FEATURE_BRANCH_VERSION }}" >> $GITHUB_OUTPUT
+          echo "service-name=${{ steps.dotenv-load.outputs.CYPRESS_SERVICE_NAME }}" >> $GITHUB_OUTPUT
+          echo "randomizer-active=${{ steps.dotenv-load.outputs.CYPRESS_RANDOMIZER_ACTIVE }}" >> $GITHUB_OUTPUT
+          echo "product-qtty=${{ steps.dotenv-load.outputs.CYPRESS_PRODUCTS_QTTY }}" >> $GITHUB_OUTPUT
+          echo "cut-active=${{ steps.dotenv-load.outputs.CYPRESS_CUT_ACTIVE }}" >> $GITHUB_OUTPUT
+          echo "cut-qtty=${{ steps.dotenv-load.outputs.CYPRESS_CUT_QTTY }}" >> $GITHUB_OUTPUT
 
 
   cypress-run-alza:
+    needs: dotenv-setup
     # outputs:
     # cy-manual: ${{steps.cypress-e2e-manual.outputs}}
     # cy-remote: ${{steps.cypress-remote-dispatch.outputs}}
@@ -80,19 +106,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node_modules-build-
 
-      - name: Status check and cache update.
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-        run: |
-          echo "inputs ${{ toJSON(inputs) }}"
-          echo "event name: ${{github.event_name}}"
-          echo "CYPRESS_FEATURE_BRANCH_VERSION=${{ toJSON(github.event.inputs.test_feature_branch_version) }}" >> $GITHUB_ENV
-          echo "CYPRESS_SERVICE_NAME=${{ toJSON(github.event.inputs.service_name) }}" >> $GITHUB_ENV
-          echo "CYPRESS_RANDOMIZER_ACTIVE=${{ toJSON(github.event.inputs.randomizer_active) }}" >> $GITHUB_ENV
-          echo "CYPRESS_PRODUCTS_QTTY=${{ toJSON(github.event.inputs.products_qtty) }}" >> $GITHUB_ENV
-          echo "CYPRESS_TEST_CASE=${{ toJSON(github.event.inputs.test_case) }}" >> $GITHUB_ENV
-          echo "CYPRESS_CUT_ACTIVE=${{ toJSON(github.event.inputs.cut_active) }}" >> $GITHUB_ENV
-          echo "CYPRESS_CUT_QTTY=${{ toJSON(github.event.inputs.cut_qtty) }}" >> $GITHUB_ENV
-          echo "E2E_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+    
 
       - name: dotenv-action (process.env access)
         if: ${{ github.event_name != 'workflow_dispatch' }}
@@ -173,14 +187,15 @@ jobs:
     steps:
       - name: console (dotenv reading)
         run: |
-          echo "HELEMESE ${{ toJSON(needs.dotenv-setup.outputs.loaded-test-case)}}"
-          echo "HELEMESE ${{ toJSON(needs.dotenv-setup.outputs.loaded-test-feature-branch-version)}}"
+          echo "HELEMESE 1 ${{ needs.dotenv-setup.outputs.loaded-test-case }}"
+          echo "HELEMESE 2 ${{ toJSON(needs.dotenv-setup.outputs.loaded-test-feature-branch-version)}}"
 
   cypress-run-shoptet:
     # if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_003_e2e_shoptet' }}
     #needs: cypress-run-kaufland
+    needs: dotenv-setup
     runs-on: ubuntu-latest
     steps:
       - name: console (job forking)
         run: |
-          echo "HELEMESE ${{github.event_name}}"
+          echo "HELEMESE ${{needs.dotenv-setup.outputs.loaded-test-case}}"
