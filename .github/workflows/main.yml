@@ -88,6 +88,7 @@ jobs:
 
   cypress-run-alza:
     needs: dotenv-setup
+    if: ${{ needs.dotenv-setup.outputs.loaded-test-case == 'TC_001_e2e_alza' }}
     # outputs:
     # cy-manual: ${{steps.cypress-e2e-manual.outputs}}
     # cy-remote: ${{steps.cypress-remote-dispatch.outputs}}
@@ -182,8 +183,8 @@ jobs:
           if-no-files-found: ignore
 
   cypress-run-kaufland:
-    # if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_002_e2e_kaufland' }}
     needs: dotenv-setup
+    if: ${{ needs.dotenv-setup.outputs.loaded-test-case == 'TC_002_e2e_kaufland' }}
     runs-on: ubuntu-latest
     steps:
       - name: console (dotenv reading)
@@ -192,9 +193,9 @@ jobs:
           echo "HELEMESE 2 ${{ toJSON(needs.dotenv-setup.outputs.loaded-test-feature-branch-version)}}"
 
   cypress-run-shoptet:
-    # if: ${{ jobs.dotenv-setup.outputs.CYPRESS_TEST_CASE == 'TC_003_e2e_shoptet' }}
-    #needs: cypress-run-kaufland
     needs: dotenv-setup
+    if: ${{ needs.dotenv-setup.outputs.loaded-test-case == 'TC_003_e2e_shoptet' }}
+    #needs: cypress-run-kaufland
     runs-on: ubuntu-latest
     steps:
       - name: console (job forking)
