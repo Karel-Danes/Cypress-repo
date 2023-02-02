@@ -244,8 +244,7 @@ jobs:
 
 
       - name: helemese 2
-        if: ${{ github.event.prod-sync-e2e-run-shoptet.conclusion == 'canceled' }}
+        if: ${{ needs.prod-sync-e2e-run-shoptet.result == 'success' }}
         run: |
-          echo "${{github.event.prod-sync-e2e-run-shoptet.conclusion}}"
-          echo "was canceled"
+          echo "was super"
      
