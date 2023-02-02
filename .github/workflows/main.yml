@@ -29,7 +29,7 @@ on:
         required: false
         type: string
 
-      CUT_QTTY:
+      cut_qtty:
         description: "number(=> parseInt()) of db cut product variants"
         required: false
         type: string
