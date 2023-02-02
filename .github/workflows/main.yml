@@ -86,6 +86,11 @@ jobs:
           echo "product-qtty=${{ steps.dotenv-load.outputs.CYPRESS_PRODUCTS_QTTY }}" >> $GITHUB_OUTPUT
           echo "cut-active=${{ steps.dotenv-load.outputs.CYPRESS_CUT_ACTIVE }}" >> $GITHUB_OUTPUT
           echo "cut-qtty=${{ steps.dotenv-load.outputs.CYPRESS_CUT_QTTY }}" >> $GITHUB_OUTPUT
+  
+      - id: inner data
+        run: |
+          echo "${{ steps.dotenv-load.outputs.CYPRESS_TEST_CASE}}" 
+       
 
 
   prod-sync-e2e-run-alza:
