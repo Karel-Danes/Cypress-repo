@@ -149,11 +149,11 @@ jobs:
           headed: false
           spec: cypress/e2e/${{ env.CYPRESS_TEST_CASE}}.cy.js
         env:
-          CYPRESS_TEST_CASE: ${{steps.dotenv.outputs.CYPRESS_TEST_CASE}}
-          CYPRESS_FEATURE_BRANCH_VERSION: ${{steps.dotenv.outputs.CYPRESS_FEATURE_BRANCH_VERSION}}
-          CYPRESS_SERVICE_NAME: ${{steps.dotenv.outputs.CYPRESS_SERVICE_NAME}}
-          CYPRESS_RANDOMIZER_ACTIVE: ${{steps.dotenv.outputs.CYPRESS_RANDOMIZER_ACTIVE}}
-          CYPRESS_PRODUCTS_AMOUNT: ${{steps.dotenv.outputs.CYPRESS_PRODUCTS_AMOUNT}}
+          CYPRESS_TEST_CASE: ${{needs.dotenv-setup.outputs.loaded-test-case}}
+          CYPRESS_FEATURE_BRANCH_VERSION: ${{needs.dotenv-setup.outputs.loaded-test-feature-branch-version}}
+          CYPRESS_SERVICE_NAME: ${{needs.dotenv-setup.outputs.loaded-service-name}}
+          CYPRESS_RANDOMIZER_ACTIVE: ${{needs.dotenv-setup.outputs.loaded-randomizer-active}}
+          CYPRESS_PRODUCTS_QTTY: ${{needs.dotenv-setup.outputs.loaded-products-qtty}}
 
       - name: Create artifact package (nonsynced product variants)
         if: always() && (steps.cypress-e2e-manual.conclusion == 'failure' || steps.cypress-remote-dispatch.conclusion == 'failure')

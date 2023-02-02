@@ -76,12 +76,12 @@ describe('Testing API expected behavior', () => {
 
     Cypress.log({
       name: 'INFO',
-      message: `PRODUCTS_AMOUNT type: ${typeof (Cypress.env('PRODUCTS_AMOUNT'))}`
+      message: `PRODUCTS_QTTY type: ${typeof (Cypress.env('PRODUCTS_QTTY'))}`
     })
 
     Cypress.log({
       name: 'INFO',
-      message: `PRODUCTS_AMOUNT values: ${Cypress.env('PRODUCTS_AMOUNT')}`
+      message: `PRODUCTS_QTTY values: ${Cypress.env('PRODUCTS_QTTY')}`
     })
 
     Cypress.log({
