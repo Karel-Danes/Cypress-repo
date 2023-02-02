@@ -87,7 +87,7 @@ jobs:
           echo "cut-active=${{ steps.dotenv-load.outputs.CYPRESS_CUT_ACTIVE }}" >> $GITHUB_OUTPUT
           echo "cut-qtty=${{ steps.dotenv-load.outputs.CYPRESS_CUT_QTTY }}" >> $GITHUB_OUTPUT
   
-      - id: inner data
+      - id: inner-data
         run: |
           echo "${{ steps.dotenv-load.outputs.CYPRESS_TEST_CASE}}" 
        
