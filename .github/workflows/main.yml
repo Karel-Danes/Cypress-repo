@@ -185,7 +185,7 @@ jobs:
           echo "HELEMESE ${{needs.environment-setup.outputs.loaded-test-case}}"
 
   testing-cancel:
-    needs: [environment-setup, prod-sync-e2e-run-shoptet, prod-sync-e2e-run-kaufland]
+    needs: [environment-setup, prod-sync-e2e-run-shoptet, prod-sync-e2e-run-kaufland, prod-sync-e2e-run-alza]
     if: always()
     runs-on: ubuntu-latest
     steps:
