@@ -42,7 +42,7 @@ on:
 
 jobs:
   dotenv-setup:
-    if: (github.event != 'workflow_dispatch')
+    #if: (github.event != 'workflow_dispatch')
     runs-on: ubuntu-latest
     outputs:
       loaded-test-case: ${{ steps.dotenv.outputs.test-case }}
@@ -73,6 +73,7 @@ jobs:
 
       - id: dotenv-load
         uses: falti/dotenv-action@v1.0.2
+
       - id: dotenv
         run: |
           cat .env
@@ -148,7 +149,7 @@ jobs:
           headed: false
           spec: cypress/e2e/${{ env.CYPRESS_TEST_CASE}}.cy.js
         env:
-          CYPRESS_TEST_CASE: ${{env.CYPRESS_TEST_CASE}}
+          CYPRESS_TEST_CASE: ${{steps.dotenv.outputs.CYPRESS_TEST_CASE}}
           CYPRESS_FEATURE_BRANCH_VERSION: ${{env.CYPRESS_FEATURE_BRANCH_VERSION}}
           CYPRESS_SERVICE_NAME: ${{env.CYPRESS_SERVICE_NAME}}
           CYPRESS_RANDOMIZER_ACTIVE: ${{env.CYPRESS_RANDOMIZER_ACTIVE}}
