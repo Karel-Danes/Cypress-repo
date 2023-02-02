@@ -233,6 +233,7 @@ jobs:
 
   testing-cancel:
     needs: [environment-setup, prod-sync-e2e-run-shoptet, prod-sync-e2e-run-kaufland]
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: helemese
