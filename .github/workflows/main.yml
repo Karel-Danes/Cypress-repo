@@ -109,10 +109,10 @@ jobs:
 
     
 
-      - name: dotenv-action (process.env access)
-        if: ${{ github.event_name != 'workflow_dispatch' }}
-        id: dotenv
-        uses: falti/dotenv-action@v1.0.2
+     # - name: dotenv-action (process.env access)
+     #   if: ${{ github.event_name != 'workflow_dispatch' }}
+     #   id: dotenv
+     #   uses: falti/dotenv-action@v1.0.2
 
       - name: Set environment variables
         if: ${{ github.event_name != 'workflow_dispatch' }}
@@ -150,10 +150,10 @@ jobs:
           spec: cypress/e2e/${{ env.CYPRESS_TEST_CASE}}.cy.js
         env:
           CYPRESS_TEST_CASE: ${{steps.dotenv.outputs.CYPRESS_TEST_CASE}}
-          CYPRESS_FEATURE_BRANCH_VERSION: ${{env.CYPRESS_FEATURE_BRANCH_VERSION}}
-          CYPRESS_SERVICE_NAME: ${{env.CYPRESS_SERVICE_NAME}}
-          CYPRESS_RANDOMIZER_ACTIVE: ${{env.CYPRESS_RANDOMIZER_ACTIVE}}
-          CYPRESS_PRODUCTS_AMOUNT: ${{env.CYPRESS_PRODUCTS_AMOUNT}}
+          CYPRESS_FEATURE_BRANCH_VERSION: ${{steps.dotenv.outputs.CYPRESS_FEATURE_BRANCH_VERSION}}
+          CYPRESS_SERVICE_NAME: ${{steps.dotenv.outputs.CYPRESS_SERVICE_NAME}}
+          CYPRESS_RANDOMIZER_ACTIVE: ${{steps.dotenv.outputs.CYPRESS_RANDOMIZER_ACTIVE}}
+          CYPRESS_PRODUCTS_AMOUNT: ${{steps.dotenv.outputs.CYPRESS_PRODUCTS_AMOUNT}}
 
       - name: Create artifact package (nonsynced product variants)
         if: always() && (steps.cypress-e2e-manual.conclusion == 'failure' || steps.cypress-remote-dispatch.conclusion == 'failure')
