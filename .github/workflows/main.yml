@@ -41,8 +41,10 @@ on:
   push:
 
 jobs:
-  dotenv-setup:
-    #if: (github.event != 'workflow_dispatch')
+
+
+
+  environment-setup:
     runs-on: ubuntu-latest
     outputs:
       loaded-test-case: ${{ steps.dotenv.outputs.test-case }}
@@ -86,9 +88,11 @@ jobs:
           echo "cut-qtty=${{ steps.dotenv-load.outputs.CYPRESS_CUT_QTTY }}" >> $GITHUB_OUTPUT
 
 
-  cypress-run-alza:
-    needs: dotenv-setup
-    if: ${{ needs.dotenv-setup.outputs.loaded-test-case == 'TC_001_e2e_alza' }}
+
+
+  prod-sync-e2e-run-alza:
+    needs: environment-setup
+    if: ${{ needs.environment-setup.outputs.loaded-test-case == 'TC_001_e2e_alza' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -131,7 +135,7 @@ jobs:
       #    install: false
       #    browser: electron
       #    headed: false
-      #    spec: cypress/e2e/${{ needs.dotenv-setup.outputs.loaded-test-case }}.cy.js
+      #    spec: cypress/e2e/${{ needs.environment-setup.outputs.loaded-test-case }}.cy.js
         #env:
         # CYPRESS_TEST_CASE: ${{env.CYPRESS_TEST_CASE}}
         # CYPRESS_FEATURE_BRANCH_VERSION: ${{env.CYPRESS_FEATURE_BRANCH_VERSION}}
@@ -145,13 +149,13 @@ jobs:
           #config: video=false, screenshotOnRunFailure=false
           browser: electron
           headed: false
-          spec: cypress/e2e/${{ needs.dotenv-setup.outputs.loaded-test-case }}.cy.js
+          spec: cypress/e2e/${{ needs.environment-setup.outputs.loaded-test-case }}.cy.js
         env:
-          CYPRESS_TEST_CASE: ${{needs.dotenv-setup.outputs.loaded-test-case}}
-          CYPRESS_FEATURE_BRANCH_VERSION: ${{needs.dotenv-setup.outputs.loaded-test-feature-branch-version}}
-          CYPRESS_SERVICE_NAME: ${{needs.dotenv-setup.outputs.loaded-service-name}}
-          CYPRESS_RANDOMIZER_ACTIVE: ${{needs.dotenv-setup.outputs.loaded-randomizer-active}}
-          CYPRESS_PRODUCTS_QTTY: ${{needs.dotenv-setup.outputs.loaded-products-qtty}}
+          CYPRESS_TEST_CASE: ${{needs.environment-setup.outputs.loaded-test-case}}
+          CYPRESS_FEATURE_BRANCH_VERSION: ${{needs.environment-setup.outputs.loaded-test-feature-branch-version}}
+          CYPRESS_SERVICE_NAME: ${{needs.environment-setup.outputs.loaded-service-name}}
+          CYPRESS_RANDOMIZER_ACTIVE: ${{needs.environment-setup.outputs.loaded-randomizer-active}}
+          CYPRESS_PRODUCTS_QTTY: ${{needs.environment-setup.outputs.loaded-products-qtty}}
 
       - name: Create artifact package (nonsynced product variants)
         if: always() && ( steps.cypress-alza.conclusion == 'failure')
@@ -179,9 +183,9 @@ jobs:
           retention-days: 30
           if-no-files-found: ignore
 
-  cypress-run-kaufland:
-    needs: dotenv-setup
-    if: ${{ needs.dotenv-setup.outputs.loaded-test-case == 'TC_002_e2e_kaufland' }}
+  prod-sync-e2e-run-kaufland:
+    needs: environment-setup
+    if: ${{ needs.environment-setup.outputs.loaded-test-case == 'TC_002_e2e_kaufland' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -210,13 +214,13 @@ jobs:
           #config: video=false, screenshotOnRunFailure=false
           browser: electron
           headed: false
-          spec: cypress/e2e/${{ needs.dotenv-setup.outputs.loaded-test-case }}.cy.js
+          spec: cypress/e2e/${{ needs.environment-setup.outputs.loaded-test-case }}.cy.js
         env:
-          CYPRESS_TEST_CASE: ${{needs.dotenv-setup.outputs.loaded-test-case}}
-          CYPRESS_FEATURE_BRANCH_VERSION: ${{needs.dotenv-setup.outputs.loaded-test-feature-branch-version}}
-          CYPRESS_SERVICE_NAME: ${{needs.dotenv-setup.outputs.loaded-service-name}}
-          CYPRESS_RANDOMIZER_ACTIVE: ${{needs.dotenv-setup.outputs.loaded-randomizer-active}}
-          CYPRESS_PRODUCTS_QTTY: ${{needs.dotenv-setup.outputs.loaded-products-qtty}}
+          CYPRESS_TEST_CASE: ${{needs.environment-setup.outputs.loaded-test-case}}
+          CYPRESS_FEATURE_BRANCH_VERSION: ${{needs.environment-setup.outputs.loaded-test-feature-branch-version}}
+          CYPRESS_SERVICE_NAME: ${{needs.environment-setup.outputs.loaded-service-name}}
+          CYPRESS_RANDOMIZER_ACTIVE: ${{needs.environment-setup.outputs.loaded-randomizer-active}}
+          CYPRESS_PRODUCTS_QTTY: ${{needs.environment-setup.outputs.loaded-products-qtty}}
 
       - name: Create artifact package (nonsynced product variants)
         if: always() && ( steps.cypress-kaufland.conclusion == 'failure')
@@ -246,12 +250,12 @@ jobs:
 
 
 
-  cypress-run-shoptet:
-    needs: dotenv-setup
-    if: ${{ needs.dotenv-setup.outputs.loaded-test-case == 'TC_003_e2e_shoptet' }}
+  prod-sync-e2e-run-shoptet:
+    needs: environment-setup
+    if: ${{ needs.environment-setup.outputs.loaded-test-case == 'TC_003_e2e_shoptet' }}
     #needs: cypress-run-kaufland
     runs-on: ubuntu-latest
     steps:
       - name: console (job forking)
         run: |
-          echo "HELEMESE ${{needs.dotenv-setup.outputs.loaded-test-case}}"
+          echo "HELEMESE ${{needs.environment-setup.outputs.loaded-test-case}}"
