@@ -172,7 +172,7 @@ jobs:
     steps:
       - name: console (job forking)
         run: |
-          echo "HELEMESE ${{needs.environment-setup.outputs.loaded-test-case}}"
+          echo "HELEMESE!! ${{needs.environment-setup.outputs.loaded-test-case}}"
 
   testing-cancel:
     needs:
