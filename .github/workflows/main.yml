@@ -196,7 +196,7 @@ jobs:
       - name: helemese 2
         if: ${{ needs.prod-sync-e2e-run-shoptet.result == 'success' }}
         run: |
-          echo "was super"
+          echo "was super!"
 
       - name: Create artifact package (nonsynced product variants)
         if: always() && ( needs.prod-sync-e2e-run-alza.result == 'failure' || needs.prod-sync-e2e-run-kaufland.result == 'failure' || needs.prod-sync-e2e-run-shoptet.result == 'failure')
