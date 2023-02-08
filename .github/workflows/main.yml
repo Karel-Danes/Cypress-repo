@@ -126,6 +126,32 @@ jobs:
           CYPRESS_RANDOMIZER_ACTIVE: ${{needs.environment-setup.outputs.loaded-randomizer-active}}
           CYPRESS_PRODUCTS_QTTY: ${{needs.environment-setup.outputs.loaded-products-qtty}}
 
+      - name: Create artifact package (nonsynced product variants)
+        if: always() && ( steps.cypress-alza.output == 'failure')
+        run: tar -cf nonSyncedProductsOriginal.tar ./cache_data/cache.json
+
+      - name: Create artifact package (logs)
+        if: always()
+        run: tar -cf fullLogsOriginal.tar ./logs
+
+      - name: Upload Artifact (nonsynced product variants)
+        if: always() && ( steps.cypress-alza.output == 'failure')
+        uses: actions/upload-artifact@v3
+        with:
+          name: unsynced-product-variants-for-download-original
+          path: nonSyncedProductsOriginal.tar
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Upload Artifact (logs)
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-mongo-logs-for-download-original
+          path: fullLogsOriginal.tar
+          retention-days: 30
+          if-no-files-found: ignore
+
   prod-sync-e2e-run-kaufland:
     needs: environment-setup
     if: ${{ needs.environment-setup.outputs.loaded-test-case == 'TC_002_e2e_kaufland' }}
