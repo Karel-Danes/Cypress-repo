@@ -127,7 +127,7 @@ jobs:
           CYPRESS_PRODUCTS_QTTY: ${{needs.environment-setup.outputs.loaded-products-qtty}}
 
       - name: Create artifact package (nonsynced product variants)
-        if: always() && ( steps.cypress-alza.output == 'failure')
+        if: always() && ( steps.cypress-alza.conclusion == 'failure')
         run: tar -cf nonSyncedProductsOriginal.tar ./cache_data/cache.json
 
       - name: Create artifact package (logs)
@@ -135,7 +135,7 @@ jobs:
         run: tar -cf fullLogsOriginal.tar ./logs
 
       - name: Upload Artifact (nonsynced product variants)
-        if: always() && ( steps.cypress-alza.output == 'failure')
+        if: always() && ( steps.cypress-alza.conclusion == 'failure')
         uses: actions/upload-artifact@v3
         with:
           name: unsynced-product-variants-for-download-original
