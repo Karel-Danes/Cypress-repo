@@ -147,7 +147,7 @@ jobs:
           install: false
           browser: electron
           headed: false
-          spec: cypress/e2e/${{ env.CYPRESS_TEST_CASE }}cy.js
+          spec: cypress/e2e/${{ env.CYPRESS_TEST_CASE }}.cy.js
 
       - name: Create artifact package (nonsynced product variants)
         if: always() && ( steps.cypress-prod-sync-e2e-kaufland.conclusion == 'failure')
