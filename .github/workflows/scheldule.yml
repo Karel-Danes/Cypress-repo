@@ -1,0 +1,176 @@
+name: 🧪 E2E schedule->
+on:
+  push:
+
+jobs:
+  environment-setup-alza:
+    runs-on: ubuntu-latest
+    outputs:
+      loaded-test-case: ${{ steps.dotenv.outputs.test-case }}
+      loaded-test-feature-branch-version: ${{ steps.dotenv.outputs.test-feature-branch-version }}
+      loaded-service-name: ${{ steps.dotenv.outputs.service-name }}
+      loaded-randomizer-active: ${{ steps.dotenv.outputs.randomizer-active }}
+      loaded-products-qtty: ${{ steps.dotenv.outputs.product-qtty }}
+      loaded-cut-active: ${{ steps.dotenv.outputs.cut-active }}
+      loaded-cut-qtty: ${{ steps.dotenv.outputs.cut-qtty }}
+      #slack-notification: ${{ steps.slack.outputs.ts }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setting up environment for alza-service scenario
+        run: |
+          echo "event name: ${{github.event_name}}"
+          echo "CYPRESS_FEATURE_BRANCH_VERSION=test-alza-service" >> $GITHUB_ENV
+          echo "CYPRESS_SERVICE_NAME=expando-global/alza-service" >> $GITHUB_ENV
+          echo "CYPRESS_TEST_CASE=TC_001_e2e_alza" >> $GITHUB_ENV
+          echo "E2E_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+
+      - id: dotenv-load
+        uses: falti/dotenv-action@v1.0.2
+
+      - id: dotenv
+        run: |
+          cat .env
+          echo "test-case=${{ steps.dotenv-load.outputs.CYPRESS_TEST_CASE }}" >> $GITHUB_OUTPUT
+          echo "test-feature-branch-version=${{ steps.dotenv-load.outputs.CYPRESS_FEATURE_BRANCH_VERSION }}" >> $GITHUB_OUTPUT
+          echo "service-name=${{ steps.dotenv-load.outputs.CYPRESS_SERVICE_NAME }}" >> $GITHUB_OUTPUT
+          echo "randomizer-active=${{ steps.dotenv-load.outputs.CYPRESS_RANDOMIZER_ACTIVE }}" >> $GITHUB_OUTPUT
+          echo "product-qtty=${{ steps.dotenv-load.outputs.CYPRESS_PRODUCTS_QTTY }}" >> $GITHUB_OUTPUT
+          echo "cut-active=${{ steps.dotenv-load.outputs.CYPRESS_CUT_ACTIVE }}" >> $GITHUB_OUTPUT
+          echo "cut-qtty=${{ steps.dotenv-load.outputs.CYPRESS_CUT_QTTY }}" >> $GITHUB_OUTPUT
+
+  prod-sync-e2e-run-alza:
+    needs: environment-setup-alza
+    if: (needs.environment-setup-alza.result == 'success')
+    #if: ${{ needs.environment-setup.outputs.loaded-test-case == 'TC_001_e2e_alza' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Caches
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/Cypress
+            build
+            node_modules
+          key: ${{ runner.os }}-node_modules-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-build-
+
+      - name: Install root dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Cypress run (all calling scenarios)
+        uses: cypress-io/github-action@v4
+        id: cypress-prod-sync-e2e-alza
+        with:
+          install: false
+          browser: electron
+          headed: false
+          spec: cypress/e2e/${{ needs.environment-setup-alza.outputs.loaded-test-case }}_service/*.**
+        # env:
+        # CYPRESS_TEST_CASE: ${{needs.environment-setup.outputs.loaded-test-case}}
+        # CYPRESS_FEATURE_BRANCH_VERSION: ${{needs.environment-setup.outputs.loaded-test-feature-branch-version}}
+        # CYPRESS_RANDOMIZER_ACTIVE: ${{needs.environment-setup.outputs.loaded-randomizer-active}}
+        # CYPRESS_PRODUCTS_QTTY: ${{needs.environment-setup.outputs.loaded-products-qtty}}
+        # CYPRESS_CUT_ACTIVE: ${{needs.environment-setup.outputs.loaded-cut-active}}
+        # CYPRESS_CUT_QTTY: ${{needs.environment-setup.outputs.loaded-cut-qtty}}
+
+      - name: Create artifact package (nonsynced product variants)
+        if: always() && ( steps.cypress-prod-sync-e2e-alza.conclusion == 'failure')
+        run: tar -cf nonSyncedProducts1.tar ./cache_data/nonSyncedProductVariants.json
+
+      - name: Create artifact package (logs)
+        if: always()
+        run: tar -cf fullLogs1.tar ./logs
+
+      - name: Upload artifact (nonsynced product variants)
+        if: always() && ( steps.cypress-prod-sync-e2e-alza.conclusion == 'failure')
+        uses: actions/upload-artifact@v3
+        with:
+          name: unsynced-product-variants-for-download
+          path: nonSyncedProducts1.tar
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Upload artifact (logs)
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-mongo-logs-for-download
+          path: fullLogs1.tar
+          retention-days: 30
+          if-no-files-found: ignore
+
+
+
+  prod-sync-e2e-run-kaufland:
+    needs: prod-sync-e2e-run-alza
+    if: always()
+
+    #if: ${{ needs.environment-setup.outputs.loaded-test-case == 'TC_002_e2e_kaufland' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setting up environment for kaufland-service scenario
+        run: |
+          echo "event name: ${{github.event_name}}"
+          echo "CYPRESS_FEATURE_BRANCH_VERSION=test-kaufland-service" >> $GITHUB_ENV
+          echo "CYPRESS_SERVICE_NAME=expando-global/kaufland-service" >> $GITHUB_ENV
+          echo "CYPRESS_TEST_CASE=TC_002_e2e_kaufland" >> $GITHUB_ENV
+          echo "E2E_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+
+      - name: Caches
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/Cypress
+            build
+            node_modules
+          key: ${{ runner.os }}-node_modules-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-build-
+
+      - name: Install root dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Cypress run (all calling scenarios)
+        uses: cypress-io/github-action@v4
+        id: cypress-prod-sync-e2e-kaufland
+        with:
+          install: false
+          browser: electron
+          headed: false
+          spec: cypress/e2e/${{ needs.environment-setup-kaufland.outputs.loaded-test-case }}_service/*.**
+
+      - name: Create artifact package (nonsynced product variants)
+        if: always() && ( steps.cypress-prod-sync-e2e-kaufland.conclusion == 'failure')
+        run: tar -cf nonSyncedProducts2.tar ./cache_data/nonSyncedProductVariants.json
+
+      - name: Create artifact package (logs)
+        if: always()
+        run: tar -cf fullLogs2.tar ./logs
+
+      - name: Upload artifact (nonsynced product variants)
+        if: always() && ( steps.cypress-prod-sync-e2e-kaufland.conclusion == 'failure')
+        uses: actions/upload-artifact@v3
+        with:
+          name: unsynced-product-variants-for-download
+          path: nonSyncedProducts2.tar
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Upload artifact (logs)
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-mongo-logs-for-download
+          path: fullLogs2.tar
+          retention-days: 30
+          if-no-files-found: ignore

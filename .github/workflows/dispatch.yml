@@ -1,28 +1,26 @@
-name: 🧪 E2E product sync build->
+name: 🧪 E2E dispatch->
 on:
   workflow_dispatch:
     inputs:
       test_feature_branch_version:
-        description: "Particular merge request db name."
-        required: false
-        #default: "test-alza-service"
+        description: "Particular merge request image version"
+        required: true
         type: string
 
       service_name:
-        description: "name of calling respository"
-        required: false
+        description: "Calling owner repository name"
+        required: true
+        type: string
+
+      test-case:
+        description: "Particular service scenario"
+        required: true
         type: string
 
       randomizer_active:
-        description: "Products variants randomizer engaging"
+        description: "Products variants randomizer engaging (yes/no)"
         required: false
         type: boolean
-
-      test_case:
-        description: "test cases"
-        required: false
-        type: string
-        #default: "alza"
 
       products_qtty:
         description: "number(=> parseInt()) of simulated product variants"
@@ -38,7 +36,6 @@ on:
         description: "logic (yes/no) of shortening sequence"
         required: false
         type: boolean
-  #push:
 
 jobs:
   environment-setup:
@@ -51,6 +48,7 @@ jobs:
       loaded-products-qtty: ${{ steps.dotenv.outputs.product-qtty }}
       loaded-cut-active: ${{ steps.dotenv.outputs.cut-active }}
       loaded-cut-qtty: ${{ steps.dotenv.outputs.cut-qtty }}
+      slack-notification: ${{ steps.slack.outputs.ts }}
 
     steps:
       - name: Checkout
@@ -84,10 +82,6 @@ jobs:
           echo "cut-active=${{ steps.dotenv-load.outputs.CYPRESS_CUT_ACTIVE }}" >> $GITHUB_OUTPUT
           echo "cut-qtty=${{ steps.dotenv-load.outputs.CYPRESS_CUT_QTTY }}" >> $GITHUB_OUTPUT
 
-      - id: inner-data
-        run: |
-          echo "${{ steps.dotenv-load.outputs.CYPRESS_TEST_CASE}}"
-
   prod-sync-e2e-run-alza:
     needs: environment-setup
     if: ${{ needs.environment-setup.outputs.loaded-test-case == 'TC_001_e2e_alza' }}
@@ -112,43 +106,43 @@ jobs:
 
       - name: Cypress run (all calling scenarios)
         uses: cypress-io/github-action@v4
-        id: cypress-alza
+        id: cypress-prod-sync-e2e-alza
         with:
           install: false
-          #config: video=false, screenshotOnRunFailure=false
           browser: electron
           headed: false
-          spec: cypress/e2e/${{ needs.environment-setup.outputs.loaded-test-case }}.cy.js
-        env:
-          CYPRESS_TEST_CASE: ${{needs.environment-setup.outputs.loaded-test-case}}
-          CYPRESS_FEATURE_BRANCH_VERSION: ${{needs.environment-setup.outputs.loaded-test-feature-branch-version}}
-          CYPRESS_SERVICE_NAME: ${{needs.environment-setup.outputs.loaded-service-name}}
-          CYPRESS_RANDOMIZER_ACTIVE: ${{needs.environment-setup.outputs.loaded-randomizer-active}}
-          CYPRESS_PRODUCTS_QTTY: ${{needs.environment-setup.outputs.loaded-products-qtty}}
+          spec: cypress/e2e/${{ needs.environment-setup.outputs.loaded-test-case }}_service/*.**
+        # env:
+        # CYPRESS_TEST_CASE: ${{needs.environment-setup.outputs.loaded-test-case}}
+        # CYPRESS_FEATURE_BRANCH_VERSION: ${{needs.environment-setup.outputs.loaded-test-feature-branch-version}}
+        # CYPRESS_RANDOMIZER_ACTIVE: ${{needs.environment-setup.outputs.loaded-randomizer-active}}
+        # CYPRESS_PRODUCTS_QTTY: ${{needs.environment-setup.outputs.loaded-products-qtty}}
+        # CYPRESS_CUT_ACTIVE: ${{needs.environment-setup.outputs.loaded-cut-active}}
+        # CYPRESS_CUT_QTTY: ${{needs.environment-setup.outputs.loaded-cut-qtty}}
 
       - name: Create artifact package (nonsynced product variants)
-        if: always() && ( steps.cypress-alza.conclusion == 'failure')
-        run: tar -cf nonSyncedProductsOriginal.tar ./cache_data/cache.json
+        if: always() && ( steps.cypress-prod-sync-e2e-alza.conclusion == 'failure')
+        run: tar -cf nonSyncedProducts.tar ./cache_data/nonSyncedProductVariants.json
 
       - name: Create artifact package (logs)
         if: always()
-        run: tar -cf fullLogsOriginal.tar ./logs
+        run: tar -cf fullLogs.tar ./logs
 
-      - name: Upload Artifact (nonsynced product variants)
-        if: always() && ( steps.cypress-alza.conclusion == 'failure')
+      - name: Upload artifact (nonsynced product variants)
+        if: always() && ( steps.cypress-prod-sync-e2e-alza.conclusion == 'failure')
         uses: actions/upload-artifact@v3
         with:
-          name: unsynced-product-variants-for-download-original
-          path: nonSyncedProductsOriginal.tar
+          name: unsynced-product-variants-for-download
+          path: nonSyncedProducts.tar
           retention-days: 30
           if-no-files-found: ignore
 
-      - name: Upload Artifact (logs)
+      - name: Upload artifact (logs)
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: cypress-mongo-logs-for-download-original
-          path: fullLogsOriginal.tar
+          name: cypress-mongo-logs-for-download
+          path: fullLogs.tar
           retention-days: 30
           if-no-files-found: ignore
 
@@ -176,64 +170,23 @@ jobs:
 
       - name: Cypress run (all calling scenarios)
         uses: cypress-io/github-action@v4
-        id: cypress-kaufland
+        id: cypress-prod-sync-e2e-kaufland
         with:
           install: false
-          #config: video=false, screenshotOnRunFailure=false
           browser: electron
           headed: false
-          spec: cypress/e2e/${{ needs.environment-setup.outputs.loaded-test-case }}.cy.js
-        env:
-          CYPRESS_TEST_CASE: ${{needs.environment-setup.outputs.loaded-test-case}}
-          CYPRESS_FEATURE_BRANCH_VERSION: ${{needs.environment-setup.outputs.loaded-test-feature-branch-version}}
-          CYPRESS_SERVICE_NAME: ${{needs.environment-setup.outputs.loaded-service-name}}
-          CYPRESS_RANDOMIZER_ACTIVE: ${{needs.environment-setup.outputs.loaded-randomizer-active}}
-          CYPRESS_PRODUCTS_QTTY: ${{needs.environment-setup.outputs.loaded-products-qtty}}
-
-  prod-sync-e2e-run-shoptet:
-    needs: environment-setup
-    if: ${{ needs.environment-setup.outputs.loaded-test-case == 'TC_003_e2e_shoptet' }}
-    #needs: cypress-run-kaufland
-    runs-on: ubuntu-latest
-    steps:
-      - name: console (job forking)
-        run: |
-          echo "HELEMESE!! ${{needs.environment-setup.outputs.loaded-test-case}}"
-
-  testing-cancel:
-    needs:
-      [
-        environment-setup,
-        prod-sync-e2e-run-shoptet,
-        prod-sync-e2e-run-kaufland,
-        prod-sync-e2e-run-alza,
-      ]
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: helemese
-        run: |
-          echo "${{needs.prod-sync-e2e-run-shoptet.result}}"
-          echo "${{needs.prod-sync-e2e-run-kaufland.result}}"
-
-      - name: helemese 2
-        if: ${{ needs.prod-sync-e2e-run-shoptet.result == 'success' }}
-        run: |
-          echo "was super!"
+          spec: cypress/e2e/${{ needs.environment-setup.outputs.loaded-test-case }}_service/*.**
 
       - name: Create artifact package (nonsynced product variants)
-        if: always() && ( needs.prod-sync-e2e-run-alza.result == 'failure' || needs.prod-sync-e2e-run-kaufland.result == 'failure' || needs.prod-sync-e2e-run-shoptet.result == 'failure')
-        run: tar -cf nonSyncedProducts.tar ./cache_data/cache.json
+        if: always() && ( steps.cypress-prod-sync-e2e-kaufland.conclusion == 'failure')
+        run: tar -cf nonSyncedProducts.tar ./cache_data/nonSyncedProductVariants.json
 
       - name: Create artifact package (logs)
         if: always()
         run: tar -cf fullLogs.tar ./logs
 
-      - name: Upload Artifact (nonsynced product variants)
-        if: always() && ( needs.prod-sync-e2e-run-alza.result == 'failure' || needs.prod-sync-e2e-run-kaufland.result == 'failure' || needs.prod-sync-e2e-run-shoptet.result == 'failure')
+      - name: Upload artifact (nonsynced product variants)
+        if: always() && ( steps.cypress-prod-sync-e2e-kaufland.conclusion == 'failure')
         uses: actions/upload-artifact@v3
         with:
           name: unsynced-product-variants-for-download
@@ -241,7 +194,7 @@ jobs:
           retention-days: 30
           if-no-files-found: ignore
 
-      - name: Upload Artifact (logs)
+      - name: Upload artifact (logs)
         if: always()
         uses: actions/upload-artifact@v3
         with:
@@ -249,3 +202,123 @@ jobs:
           path: fullLogs.tar
           retention-days: 30
           if-no-files-found: ignore
+
+  prod-sync-e2e-run-shoptet:
+    needs: environment-setup
+    if: ${{ needs.environment-setup.outputs.loaded-test-case == 'TC_003_e2e_shoptet' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Caches
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/Cypress
+            build
+            node_modules
+          key: ${{ runner.os }}-node_modules-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-build-
+
+      - name: Install root dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Cypress run (all calling scenarios)
+        uses: cypress-io/github-action@v4
+        id: cypress-prod-sync-e2e-shoptet
+        with:
+          install: false
+          browser: electron
+          headed: false
+          spec: cypress/e2e/${{ needs.environment-setup.outputs.loaded-test-case }}_service/*.**
+
+      - name: Create artifact package (nonsynced product variants)
+        if: always() && ( steps.cypress-prod-sync-e2e-shoptet.conclusion == 'failure')
+        run: tar -cf nonSyncedProducts.tar ./cache_data/nonSyncedProductVariants.json
+
+      - name: Create artifact package (logs)
+        if: always()
+        run: tar -cf fullLogs.tar ./logs
+
+      - name: Upload artifact (nonsynced product variants)
+        if: always() && ( steps.cypress-prod-sync-e2e-shoptet.conclusion == 'failure')
+        uses: actions/upload-artifact@v3
+        with:
+          name: unsynced-product-variants-for-download
+          path: nonSyncedProducts.tar
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Upload artifact (logs)
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-mongo-logs-for-download
+          path: fullLogs.tar
+          retention-days: 30
+          if-no-files-found: ignore
+
+  prod-sync-e2e-run-cdiscount:
+    needs: environment-setup
+    if: ${{ needs.environment-setup.outputs.loaded-test-case == 'TC_004_e2e_cdiscount' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Caches
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/Cypress
+            build
+            node_modules
+          key: ${{ runner.os }}-node_modules-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-build-
+
+      - name: Install root dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Cypress run (all calling scenarios)
+        uses: cypress-io/github-action@v4
+        id: cypress-prod-sync-e2e-cdiscount
+        with:
+          install: false
+          browser: electron
+          headed: false
+          spec: cypress/e2e/${{ needs.environment-setup.outputs.loaded-test-case }}_service/*.**
+
+      - name: Create artifact package (nonsynced product variants)
+        if: always() && ( steps.cypress-prod-sync-e2e-cdiscount.conclusion == 'failure')
+        run: tar -cf nonSyncedProducts.tar ./cache_data/nonSyncedProductVariants.json
+
+      - name: Create artifact package (logs)
+        if: always()
+        run: tar -cf fullLogs.tar ./logs
+
+      - name: Upload artifact (nonsynced product variants)
+        if: always() && ( steps.cypress-prod-sync-e2e-cdiscount.conclusion == 'failure')
+        uses: actions/upload-artifact@v3
+        with:
+          name: unsynced-product-variants-for-download
+          path: nonSyncedProducts.tar
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Upload artifact (logs)
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-mongo-logs-for-download
+          path: fullLogs.tar
+          retention-days: 30
+          if-no-files-found: ignore
+
+
+
+
+
+  
