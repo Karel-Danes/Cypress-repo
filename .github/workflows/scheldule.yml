@@ -3,18 +3,10 @@ on:
   push:
 
 jobs:
-  environment-setup-alza:
+  prod-sync-e2e-run-alza:
+    if: always()
+    #if: ${{ needs.environment-setup.outputs.loaded-test-case == 'TC_001_e2e_alza' }}
     runs-on: ubuntu-latest
-    outputs:
-      loaded-test-case: ${{ steps.dotenv.outputs.test-case }}
-      loaded-test-feature-branch-version: ${{ steps.dotenv.outputs.test-feature-branch-version }}
-      loaded-service-name: ${{ steps.dotenv.outputs.service-name }}
-      loaded-randomizer-active: ${{ steps.dotenv.outputs.randomizer-active }}
-      loaded-products-qtty: ${{ steps.dotenv.outputs.product-qtty }}
-      loaded-cut-active: ${{ steps.dotenv.outputs.cut-active }}
-      loaded-cut-qtty: ${{ steps.dotenv.outputs.cut-qtty }}
-      #slack-notification: ${{ steps.slack.outputs.ts }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -26,29 +18,6 @@ jobs:
           echo "CYPRESS_SERVICE_NAME=expando-global/alza-service" >> $GITHUB_ENV
           echo "CYPRESS_TEST_CASE=TC_001_e2e_alza" >> $GITHUB_ENV
           echo "E2E_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
-
-      - id: dotenv-load
-        uses: falti/dotenv-action@v1.0.2
-
-      - id: dotenv
-        run: |
-          cat .env
-          echo "test-case=${{ steps.dotenv-load.outputs.CYPRESS_TEST_CASE }}" >> $GITHUB_OUTPUT
-          echo "test-feature-branch-version=${{ steps.dotenv-load.outputs.CYPRESS_FEATURE_BRANCH_VERSION }}" >> $GITHUB_OUTPUT
-          echo "service-name=${{ steps.dotenv-load.outputs.CYPRESS_SERVICE_NAME }}" >> $GITHUB_OUTPUT
-          echo "randomizer-active=${{ steps.dotenv-load.outputs.CYPRESS_RANDOMIZER_ACTIVE }}" >> $GITHUB_OUTPUT
-          echo "product-qtty=${{ steps.dotenv-load.outputs.CYPRESS_PRODUCTS_QTTY }}" >> $GITHUB_OUTPUT
-          echo "cut-active=${{ steps.dotenv-load.outputs.CYPRESS_CUT_ACTIVE }}" >> $GITHUB_OUTPUT
-          echo "cut-qtty=${{ steps.dotenv-load.outputs.CYPRESS_CUT_QTTY }}" >> $GITHUB_OUTPUT
-
-  prod-sync-e2e-run-alza:
-    needs: environment-setup-alza
-    if: (needs.environment-setup-alza.result == 'success')
-    #if: ${{ needs.environment-setup.outputs.loaded-test-case == 'TC_001_e2e_alza' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
 
       - name: Caches
         uses: actions/cache@v2
@@ -71,7 +40,7 @@ jobs:
           install: false
           browser: electron
           headed: false
-          spec: cypress/e2e/${{ needs.environment-setup-alza.outputs.loaded-test-case }}.cy.js
+          spec: cypress/e2e/${{ env.CYPRESS_TEST_CASE }}.cy.js
         # env:
         # CYPRESS_TEST_CASE: ${{needs.environment-setup.outputs.loaded-test-case}}
         # CYPRESS_FEATURE_BRANCH_VERSION: ${{needs.environment-setup.outputs.loaded-test-feature-branch-version}}
