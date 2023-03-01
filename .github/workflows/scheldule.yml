@@ -67,8 +67,6 @@ jobs:
           retention-days: 30
           if-no-files-found: ignore
 
-
-
   prod-sync-e2e-run-kaufland:
     needs: prod-sync-e2e-run-alza
     if: always()
