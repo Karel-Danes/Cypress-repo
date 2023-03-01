@@ -18,6 +18,16 @@ function setEnv(paramTC, paramDB) {
   // return [paramTC, paramDB]
 }
 
+function tryToFindServiceName(param) {
+  let serviceNamefound
+  if (param.includes("/")) {
+    serviceNamefound = (param.split("/"))[1]
+  } else {
+    serviceNamefound = param;
+  }
+  return serviceNamefound;
+}
+
 Cypress.Commands.add('envPrint', () => {
   cy
     .task('envPrint', {})
@@ -62,7 +72,7 @@ describe('Testing API expected behavior', () => {
 
     Cypress.log({
       name: 'INFO',
-      message: `SERVICE_NAME values: ${Cypress.env('SERVICE_NAME')}`
+      message: `SERVICE_NAME values: ${tryToFindServiceName(Cypress.env('SERVICE_NAME'))}`
     })
 
     Cypress.log({

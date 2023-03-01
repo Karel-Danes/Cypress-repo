@@ -62,7 +62,6 @@ function inputsValidator() {
     console.log(`OPS IT'S A NaN!!!!!!!!!!! ${CUT_QTTY}`)
 
   }
-
 }
 
 module.exports = defineConfig({
