@@ -5,7 +5,6 @@ on:
 jobs:
   prod-sync-e2e-run-alza:
     if: always()
-    #if: ${{ needs.environment-setup.outputs.loaded-test-case == 'TC_001_e2e_alza' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -41,13 +40,6 @@ jobs:
           browser: electron
           headed: false
           spec: cypress/e2e/${{ env.CYPRESS_TEST_CASE }}.cy.js
-        # env:
-        # CYPRESS_TEST_CASE: ${{needs.environment-setup.outputs.loaded-test-case}}
-        # CYPRESS_FEATURE_BRANCH_VERSION: ${{needs.environment-setup.outputs.loaded-test-feature-branch-version}}
-        # CYPRESS_RANDOMIZER_ACTIVE: ${{needs.environment-setup.outputs.loaded-randomizer-active}}
-        # CYPRESS_PRODUCTS_QTTY: ${{needs.environment-setup.outputs.loaded-products-qtty}}
-        # CYPRESS_CUT_ACTIVE: ${{needs.environment-setup.outputs.loaded-cut-active}}
-        # CYPRESS_CUT_QTTY: ${{needs.environment-setup.outputs.loaded-cut-qtty}}
 
       - name: Create artifact package (nonsynced product variants)
         if: always() && ( steps.cypress-prod-sync-e2e-alza.conclusion == 'failure')
@@ -80,8 +72,6 @@ jobs:
   prod-sync-e2e-run-kaufland:
     needs: prod-sync-e2e-run-alza
     if: always()
-
-    #if: ${{ needs.environment-setup.outputs.loaded-test-case == 'TC_002_e2e_kaufland' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
