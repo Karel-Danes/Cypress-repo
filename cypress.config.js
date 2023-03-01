@@ -14,7 +14,7 @@ function tryToFindServiceName(param) {
   if (param.includes("/")) {
     serviceNamefound = (param.split("/"))[1]
   } else {
-    serviceNamefound = param
+    serviceNamefound = param;
   }
   return serviceNamefound;
 }

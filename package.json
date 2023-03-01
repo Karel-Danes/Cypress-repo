@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "cy": "cypress run --headless --config video=false --browser=chrome --e2e",
+    "cy:alza:root": "cypress run --spec ./cypress/e2e/TC_001_e2e_alza.cy.js --headless --config video=false --browser=electron --e2e",
     "cy2": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config webpack.dist.config.js"
 

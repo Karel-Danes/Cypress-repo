@@ -7,8 +7,8 @@ const importedTestCase = Cypress.env('TEST_CASE')
 const importedServiceName = Cypress.env('SERVICE_NAME')
 const importedFeatureBranchDbName = Cypress.env('FEATURE_BRANCH_VERSION')
 
-let mongoString = mongoUrlStringParser(importedFeatureBranchDbName, importedServiceName, 'version');
-let mongoString2 = mongoUrlStringParser(importedFeatureBranchDbName, importedServiceName, 'commitId');
+//let mongoString = mongoUrlStringParser(importedFeatureBranchDbName, importedServiceName, 'version');
+//let mongoString2 = mongoUrlStringParser(importedFeatureBranchDbName, importedServiceName, 'commitId');
 
 function setEnv(paramTC, paramDB) {
   Cypress.log({
@@ -48,8 +48,7 @@ describe('Testing API expected behavior', () => {
 
     //setEnv(importedTestCase, importedFeatureBranchDbName)
 
-
-
+    /*
     Cypress.log({
       name: 'INFO',
       message: `version parser: ${mongoString}`
@@ -58,6 +57,8 @@ describe('Testing API expected behavior', () => {
       name: 'INFO',
       message: `comitId parser: ${mongoString2}`
     })
+*/
+
 
     Cypress.log({
       name: 'INFO',
