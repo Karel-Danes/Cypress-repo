@@ -4,7 +4,7 @@
 import { mongoUrlStringParser, setupMicroServicesInvolved } from "./../support/parent_functions"
 const fixtures = require('../fixtures/fixtures')
 const importedTestCase = Cypress.env('TEST_CASE')
-const importedServiceName = Cypress.env('SERVICE_NAME')
+//const importedServiceName = Cypress.env('SERVICE_NAME')
 const importedFeatureBranchDbName = Cypress.env('FEATURE_BRANCH_VERSION')
 
 //let mongoString = mongoUrlStringParser(importedFeatureBranchDbName, importedServiceName, 'version');
@@ -75,7 +75,7 @@ describe('Testing API expected behavior', () => {
 
     Cypress.log({
       name: 'INFO',
-      message: `SERVICE_NAME values: ${tryToFindServiceName(Cypress.env('SERVICE_NAME'))}`
+      message: `SERVICE_NAME values: ${tryToFindServiceName(Cypress.env('SERVICE_NAME2'))}`
     })
 
     Cypress.log({

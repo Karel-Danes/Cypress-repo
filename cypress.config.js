@@ -78,7 +78,7 @@ module.exports = defineConfig({
     FEATURE_BRANCH_VERSION: process.env.CYPRESS_FEATURE_BRANCH_VERSION,
     RANDOMIZER_ACTIVE: booleanParser(process.env.CYPRESS_RANDOMIZER_ACTIVE),
     PRODUCTS_QTTY: parseInt(process.env.CYPRESS_PRODUCTS_QTTY),
-    SERVICE_NAME: tryToFindServiceName(process.env.CYPRESS_SERVICE_NAME)
+    SERVICE_NAME2: tryToFindServiceName(process.env.CYPRESS_SERVICE_NAME)
   },
   e2e: {
     setupNodeEvents(on, config) {
