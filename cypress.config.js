@@ -11,11 +11,15 @@ function readCredentials() {
 
 function tryToFindServiceName(param) {
   let serviceNamefound
+  console.log(`inner Config input: ${param}` )
+
   if (param.includes("/")) {
     serviceNamefound = (param.split("/"))[1]
   } else {
     serviceNamefound = param;
   }
+  console.log(`inner Config output: ${serviceNamefound}` )
+
   return serviceNamefound;
 }
 
@@ -44,7 +48,7 @@ const TEST_CASE = extractServiceName(process.env.CYPRESS_TEST_CASE)
 const CUT_ACTIVE = booleanParser(process.env.CYPRESS_CUT_ACTIVE)
 const CUT_QTTY = parseInt(process.env.CYPRESS_CUT_QTTY)
 const FEATURE_BRANCH_VERSION = process.env.CYPRESS_FEATURE_BRANCH_VERSION
-const SERVICE_NAME = tryToFindServiceName(process.env.CYPRESS_SERVICE_NAME);
+//const SERVICE_NAME = tryToFindServiceName(process.env.CYPRESS_SERVICE_NAME);
 const productsAmount = parseInt(process.env.CYPRESS_PRODUCTS_QTTY);
 const randomizerActive = booleanParser(process.env.CYPRESS_RANDOMIZER_ACTIVE);
 const envService = extractServiceName(process.env.CYPRESS_TEST_CASE);

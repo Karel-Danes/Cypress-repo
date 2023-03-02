@@ -20,11 +20,14 @@ function setEnv(paramTC, paramDB) {
 
 function tryToFindServiceName(param) {
   let serviceNamefound
+  console.log(`inner TC input: ${param}` )
   if (param.includes("/")) {
     serviceNamefound = (param.split("/"))[1]
   } else {
     serviceNamefound = param;
   }
+  console.log(`inner TC output: ${serviceNamefound}` )
+
   return serviceNamefound;
 }
 
