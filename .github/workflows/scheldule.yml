@@ -10,7 +10,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setting up environment for alza-service scenario
+      - name: Setting up environment for alza-service __.scenario
         run: |
           echo "event name: ${{github.event_name}}"
           echo "CYPRESS_FEATURE_BRANCH_VERSION=test-alza-service" >> $GITHUB_ENV
@@ -41,7 +41,7 @@ jobs:
           headed: false
           spec: cypress/e2e/${{ env.CYPRESS_TEST_CASE }}.cy.js
 
-      - name: Create artifact package (nonsynced product variants)
+      - name: __.Create artifact package (nonsynced product variants)
         if: always() && ( steps.cypress-prod-sync-e2e-alza.conclusion == 'failure')
         run: tar -cf nonSyncedProducts1.tar ./cache_data/nonSyncedProductVariants.json
 
